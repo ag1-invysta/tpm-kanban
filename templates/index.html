@@ -376,6 +376,50 @@
     line-height: 1.4;
   }
 
+  .cdb-raid-link {
+    margin-top: 8px;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--blue);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .cdb-raid-link:hover { background: rgba(0,212,255,0.08); border-color: var(--blue); }
+
+  /* RAID filter banner — shown when navigating from a card */
+  .raid-filter-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0,212,255,0.06);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    animation: slideDown 0.2s ease;
+  }
+  .rfb-icon { font-size: 1rem; color: var(--blue); }
+  .rfb-text { font-size: 0.82rem; color: var(--text-muted); flex: 1; }
+  .rfb-text strong { color: var(--text); }
+  .rfb-clear {
+    background: none;
+    border: 1px solid rgba(0,212,255,0.25);
+    color: var(--blue);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .rfb-clear:hover { background: rgba(0,212,255,0.1); }
+
   /* Selected card highlight */
   .kanban-card.selected {
     border-color: var(--col-accent) !important;
@@ -439,8 +483,284 @@
     line-height: 1.5;
   }
 
-  /* ── RAID VIEW ───────────────────────────────────────────── */
-  .raid-grid {
+  /* ── RAID SUMMARY CHIPS ─── */
+  .raid-summary {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .raid-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+  .raid-chip-letter {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .raid-chip-count {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .raid-chip-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+  .raid-chip-open {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--orange);
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.2);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── RAID FILTER BAR ─── */
+  .raid-filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .filter-label {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+  }
+  .raid-filters select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    outline: none;
+    min-width: 130px;
+    transition: border-color 0.15s;
+  }
+  .raid-filters select:focus { border-color: var(--blue); }
+  .raid-filters select option { background: var(--surface2); }
+  .filter-clear {
+    background: rgba(233,69,96,0.1);
+    border: 1px solid rgba(233,69,96,0.25);
+    color: var(--red);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    align-self: flex-end;
+    transition: all 0.15s;
+  }
+  .filter-clear:hover { background: rgba(233,69,96,0.2); }
+
+  /* ── RAID TABLE ─── */
+  .raid-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 20px;
+  }
+  .raid-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+  .raid-table thead {
+    background: var(--surface2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .raid-table th {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-bright);
+    white-space: nowrap;
+  }
+  .raid-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    vertical-align: middle;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .raid-table tr:last-child td { border-bottom: none; }
+  .raid-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .raid-table td.desc-col { max-width: 260px; color: var(--text); }
+  .raid-table td.notes-col { max-width: 180px; font-size: 0.72rem; color: var(--text-dim); }
+  .raid-empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+
+  /* Type badge */
+  .type-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  .type-R { background: rgba(233,69,96,0.15); color: var(--red); border: 1px solid rgba(233,69,96,0.3); }
+  .type-A { background: rgba(245,166,35,0.1); color: var(--orange); border: 1px solid rgba(245,166,35,0.25); }
+  .type-I { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+  .type-D { background: rgba(124,58,237,0.15); color: var(--purple); border: 1px solid rgba(124,58,237,0.3); }
+
+  /* Score badge */
+  .score-badge {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .score-High { background: rgba(233,69,96,0.15); color: var(--red); border: 1px solid rgba(233,69,96,0.25); }
+  .score-Medium { background: rgba(245,166,35,0.1); color: var(--orange); border: 1px solid rgba(245,166,35,0.2); }
+  .score-Low { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+
+  /* Status badge */
+  .status-badge {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .status-Open { background: rgba(0,212,255,0.08); color: var(--blue); border: 1px solid rgba(0,212,255,0.2); }
+  .status-Accepted { background: rgba(245,166,35,0.08); color: var(--orange); border: 1px solid rgba(245,166,35,0.2); }
+  .status-Resolved, .status-Validated, .status-Closed { background: rgba(16,185,129,0.08); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+
+  .trend-up { color: var(--red); font-size: 1rem; }
+  .trend-stable { color: var(--text-dim); font-size: 1rem; }
+  .trend-down { color: var(--green); font-size: 1rem; }
+  .source-card { font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-dim); background: rgba(255,255,255,0.04); padding: 1px 5px; border-radius: 3px; }
+  .project-tag { font-size: 0.72rem; color: var(--text); font-weight: 500; }
+
+  /* ── RAID REFERENCE DETAILS ─── */
+  .raid-ref-details {
+    margin-bottom: 20px;
+  }
+  .raid-ref-summary {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 10px 0;
+    list-style: none;
+    user-select: none;
+  }
+  .raid-ref-summary:hover { color: var(--text); }
+  .raid-ref-details[open] .raid-ref-summary { color: var(--blue); margin-bottom: 14px; }
+  .raid-ref-details .raid-grid { margin-top: 0; }
+
+  /* ── CORRECTED FLOW DIAGRAM ─── */
+  .flow-steps {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+    position: relative;
+    overflow-x: auto;
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 14px 6px;
+    position: relative;
+    border-right: 1px solid var(--border);
+    min-width: 110px;
+  }
+  .flow-step:last-child { border-right: none; }
+  .flow-step-col-label {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    line-height: 1.3;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+  }
+  .flow-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--step-color, var(--border));
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--step-color, var(--text-dim));
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }
+  .flow-dot-empty {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px dashed var(--border);
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }
+  .flow-step-sub {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  /* ── END CORRECTED FLOW ─── */
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
@@ -540,62 +860,6 @@
     letter-spacing: 0.1em;
     color: var(--text-muted);
     margin-bottom: 20px;
-  }
-
-  .flow-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 0;
-    position: relative;
-  }
-
-  .flow-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 16px 8px;
-    position: relative;
-  }
-
-  .flow-step:not(:last-child)::after {
-    content: '→';
-    position: absolute;
-    right: -8px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-dim);
-    font-size: 1.2rem;
-    z-index: 2;
-  }
-
-  .flow-dot {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid var(--step-color);
-    background: rgba(0,0,0,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--step-color);
-    margin-bottom: 10px;
-  }
-
-  .flow-step-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-
-  .flow-step-sub {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    line-height: 1.4;
   }
 
   /* ── DISCOVERY VIEW ──────────────────────────────────────── */
@@ -902,90 +1166,6 @@
     line-height: 1.6;
   }
 
-  /* ── MODAL ───────────────────────────────────────────────── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border-bright);
-    border-radius: var(--radius-lg);
-    padding: 28px;
-    max-width: 560px;
-    width: 90%;
-    animation: modalIn 0.2s ease;
-    max-height: 85vh;
-    overflow-y: auto;
-  }
-
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .modal-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    gap: 16px;
-  }
-
-  .modal-title {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--blue);
-    margin-bottom: 6px;
-  }
-
-  .modal-subtitle {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .modal-close {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 1.2rem;
-    cursor: pointer;
-    flex-shrink: 0;
-    padding: 4px;
-    transition: color 0.2s;
-  }
-  .modal-close:hover { color: var(--text); }
-
-  .modal-section {
-    margin-bottom: 18px;
-  }
-
-  .modal-section-label {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-    margin-bottom: 8px;
-  }
-
-  .modal-section-content {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-
   /* ── UTILITIES ───────────────────────────────────────────── */
   .divider {
     height: 1px;
@@ -1028,11 +1208,105 @@
   <div id="view-raid" class="view">
     <div class="page-header">
       <h1>RAID <span>Log</span></h1>
-      <p>Risks, Assumptions, Issues, Dependencies — the living register that connects discovery to delivery. Every unknown gets a category, owner, and resolution date.</p>
+      <p>Risks, Assumptions, Issues, Dependencies — the living register synchronized across all projects and Kanban cards. Filter by any dimension; every entry links back to its source.</p>
     </div>
-    <div class="raid-grid" id="raid-grid"></div>
+
+    <!-- Summary chips -->
+    <div class="raid-summary" id="raid-summary"></div>
+
+    <!-- Filter bar -->
+    <div class="raid-filters" id="raid-filters">
+      <div class="filter-group">
+        <label class="filter-label">Project</label>
+        <select id="filter-project" onchange="applyFilters()"><option value="">All Projects</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Type</label>
+        <select id="filter-type" onchange="applyFilters()">
+          <option value="">All Types</option>
+          <option value="R">Risk</option>
+          <option value="A">Assumption</option>
+          <option value="I">Issue</option>
+          <option value="D">Dependency</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Category</label>
+        <select id="filter-category" onchange="applyFilters()"><option value="">All Categories</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Status</label>
+        <select id="filter-status" onchange="applyFilters()">
+          <option value="">All Statuses</option>
+          <option value="Open">Open</option>
+          <option value="Accepted">Accepted</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Validated">Validated</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Risk Score</label>
+        <select id="filter-score" onchange="applyFilters()">
+          <option value="">All Scores</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Owner</label>
+        <select id="filter-owner" onchange="applyFilters()"><option value="">All Owners</option></select>
+      </div>
+      <div class="filter-group filter-group-sort">
+        <label class="filter-label">Sort By</label>
+        <select id="sort-field" onchange="applyFilters()">
+          <option value="id">ID</option>
+          <option value="project">Project</option>
+          <option value="risk_score">Risk Score</option>
+          <option value="trend">Trend</option>
+          <option value="target_date">Target Date</option>
+          <option value="owner">Owner</option>
+        </select>
+      </div>
+      <button class="filter-clear" onclick="clearFilters()">✕ Clear</button>
+    </div>
+
+    <!-- Register table -->
+    <div class="raid-table-wrap">
+      <table class="raid-table" id="raid-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Project</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Prob.</th>
+            <th>Impact</th>
+            <th>Score</th>
+            <th>Strategy</th>
+            <th>Status</th>
+            <th>Owner</th>
+            <th>Target</th>
+            <th>Trend</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="raid-table-body"></tbody>
+      </table>
+      <div class="raid-empty" id="raid-empty" style="display:none">No entries match the current filters.</div>
+    </div>
+
+    <!-- Reference cards (collapsed by default) -->
+    <details class="raid-ref-details">
+      <summary class="raid-ref-summary">RAID Category Reference</summary>
+      <div class="raid-grid" id="raid-grid"></div>
+    </details>
+
+    <!-- Corrected Kanban flow -->
     <div class="raid-flow">
-      <h2>How RAID integrates with the Kanban flow</h2>
+      <h2>Where RAID entries enter the Kanban flow</h2>
       <div class="flow-steps" id="raid-flow-steps"></div>
     </div>
   </div>
@@ -1075,7 +1349,8 @@
 
 
 <script>
-// ── Data fetched from Flask API ──────────────────────────────────────────────
+// ── Inline data injected by Flask (also works as static fallback) ─────────────
+const INLINE_DATA = {{ inline_data | safe }};
 
 let kanbanData = {};
 let raidData = {};
@@ -1085,29 +1360,253 @@ let activeColId = null;
 let checkedItems = {};
 
 const WS_COLORS = ['#00d4ff', '#7c3aed', '#10b981', '#f59e0b'];
-const RACI_FLOW = [
-  { key: 'R', col: 'Discovery / Analysis', text: 'Log Risks during structured discovery', color: '#e94560' },
-  { key: 'A', col: 'Ready for Analysis', text: 'Capture Assumptions before queuing', color: '#f5a623' },
-  { key: 'I', col: 'In Progress', text: 'Surface Issues immediately — flag on board', color: '#ef4444' },
-  { key: 'D', col: 'Ready for Execution', text: 'Sequence Dependencies before execution', color: '#7c3aed' },
-  { key: '✓', col: 'Done', text: 'All RAID items resolved at exit', color: '#10b981' },
+// ── RAID FLOW (corrected — maps each type to where it enters the 7-column flow)
+// Intake: capture all types as first-pass logging
+// Ready for Analysis: validate Assumptions before queuing
+// Discovery: surface Risks and Dependencies during structured analysis
+// Ready for Execution: confirm all Dependencies cleared before work starts
+// In Progress: Issues surface here — immediate flag required
+// Review / Validation: Risks re-checked; any new Issues must resolve before exit
+// Done: all RAID items for the card must be resolved at this gate
+const RAID_FLOW_COLS = [
+  {
+    col: 'Intake',
+    entries: [{ key: 'R', label: 'Risk', color: '#e94560' }, { key: 'A', label: 'Assumption', color: '#f5a623' }, { key: 'D', label: 'Dependency', color: '#7c3aed' }],
+    note: 'Log all known R, A, D at intake'
+  },
+  {
+    col: 'Ready for Analysis',
+    entries: [{ key: 'A', label: 'Assumption', color: '#f5a623' }],
+    note: 'Validate Assumptions before queuing for discovery'
+  },
+  {
+    col: 'Discovery',
+    entries: [{ key: 'R', label: 'Risk', color: '#e94560' }, { key: 'D', label: 'Dependency', color: '#7c3aed' }],
+    note: 'Surface Risks; map all Dependencies'
+  },
+  {
+    col: 'Ready for Execution',
+    entries: [{ key: 'D', label: 'Dependency', color: '#7c3aed' }],
+    note: 'All Dependencies must be cleared as exit criteria'
+  },
+  {
+    col: 'In Progress',
+    entries: [{ key: 'I', label: 'Issue', color: '#ef4444' }],
+    note: 'Issues flagged immediately; blockers surface here'
+  },
+  {
+    col: 'Review / Validation',
+    entries: [{ key: 'R', label: 'Risk', color: '#e94560' }, { key: 'I', label: 'Issue', color: '#ef4444' }],
+    note: 'Risks re-checked; Issues must resolve before exit'
+  },
+  {
+    col: 'Done',
+    entries: [{ key: '✓', label: 'All Clear', color: '#10b981' }],
+    note: 'All RAID items resolved — exit gate enforced'
+  }
 ];
 
-async function loadAll() {
-  const [k, r, d, w] = await Promise.all([
-    fetch('/api/kanban').then(r => r.json()),
-    fetch('/api/raid').then(r => r.json()),
-    fetch('/api/discovery').then(r => r.json()),
-    fetch('/api/workstreams').then(r => r.json()),
-  ]);
-  kanbanData = k;
-  raidData = r;
-  discoveryData = d;
-  workstreamData = w;
-  renderKanban();
-  renderRaid();
-  renderDiscovery();
-  renderWorkstreams();
+let raidLogData = [];
+let filteredRaidData = [];
+
+function populateFilterOptions() {
+  const projects = [...new Set(raidLogData.map(e => e.project).filter(Boolean))].sort();
+  const categories = [...new Set(raidLogData.map(e => e.category).filter(Boolean))].sort();
+  const owners = [...new Set(raidLogData.map(e => e.owner).filter(Boolean))].sort();
+
+  const pSel = document.getElementById('filter-project');
+  projects.forEach(p => { const o = document.createElement('option'); o.value = p; o.textContent = p; pSel.appendChild(o); });
+
+  const cSel = document.getElementById('filter-category');
+  categories.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; cSel.appendChild(o); });
+
+  const oSel = document.getElementById('filter-owner');
+  owners.forEach(ow => { const o = document.createElement('option'); o.value = ow; o.textContent = ow; oSel.appendChild(o); });
+}
+
+function applyFilters() {
+  const project = document.getElementById('filter-project').value;
+  const type = document.getElementById('filter-type').value;
+  const category = document.getElementById('filter-category').value;
+  const status = document.getElementById('filter-status').value;
+  const score = document.getElementById('filter-score').value;
+  const owner = document.getElementById('filter-owner').value;
+  const sortField = document.getElementById('sort-field').value;
+
+  filteredRaidData = raidLogData.filter(e => {
+    if (project && e.project !== project) return false;
+    if (type && e.type !== type) return false;
+    if (category && e.category !== category) return false;
+    if (status && e.status !== status) return false;
+    if (score && e.risk_score !== score) return false;
+    if (owner && e.owner !== owner) return false;
+    return true;
+  });
+
+  // Sort
+  const scoreOrder = { High: 0, Medium: 1, Low: 2, '—': 3, '': 3 };
+  filteredRaidData.sort((a, b) => {
+    if (sortField === 'risk_score') return (scoreOrder[a.risk_score] ?? 3) - (scoreOrder[b.risk_score] ?? 3);
+    if (sortField === 'trend') return (a.trend || '').localeCompare(b.trend || '');
+    if (sortField === 'target_date') {
+      const da = a.target_date === '—' ? '9999' : a.target_date;
+      const db = b.target_date === '—' ? '9999' : b.target_date;
+      return da.localeCompare(db);
+    }
+    return (a[sortField] || '').localeCompare(b[sortField] || '');
+  });
+
+  renderRaidTable();
+  renderRaidSummary();
+}
+
+function clearFilters() {
+  ['filter-project','filter-type','filter-category','filter-status','filter-score','filter-owner'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('sort-field').value = 'id';
+  applyFilters();
+}
+
+function renderRaidSummary() {
+  const data = filteredRaidData.length ? filteredRaidData : raidLogData;
+  const counts = { R: 0, A: 0, I: 0, D: 0 };
+  const openCounts = { R: 0, A: 0, I: 0, D: 0 };
+  data.forEach(e => {
+    const t = e.type;
+    if (counts[t] !== undefined) {
+      counts[t]++;
+      if (e.status === 'Open') openCounts[t]++;
+    }
+  });
+  const meta = {
+    R: { label: 'Risks', color: '#e94560' },
+    A: { label: 'Assumptions', color: '#f5a623' },
+    I: { label: 'Issues', color: '#ef4444' },
+    D: { label: 'Dependencies', color: '#7c3aed' }
+  };
+  document.getElementById('raid-summary').innerHTML = Object.entries(meta).map(([k, m]) => `
+    <div class="raid-chip">
+      <span class="raid-chip-letter" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44">${k}</span>
+      <span class="raid-chip-count">${counts[k]}</span>
+      <span class="raid-chip-label">${m.label}</span>
+      ${openCounts[k] > 0 ? `<span class="raid-chip-open">${openCounts[k]} open</span>` : ''}
+    </div>
+  `).join('') + `
+    <div class="raid-chip" style="margin-left:auto">
+      <span class="raid-chip-count" style="color:var(--text-muted)">${filteredRaidData.length || raidLogData.length}</span>
+      <span class="raid-chip-label">total entries${filteredRaidData.length && filteredRaidData.length !== raidLogData.length ? ' (filtered)' : ''}</span>
+    </div>`;
+}
+
+function trendClass(t) {
+  if (t === '↑') return 'trend-up';
+  if (t === '↓') return 'trend-down';
+  return 'trend-stable';
+}
+
+function renderRaidTable() {
+  const tbody = document.getElementById('raid-table-body');
+  const empty = document.getElementById('raid-empty');
+  if (!filteredRaidData.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  tbody.innerHTML = filteredRaidData.map(e => `
+    <tr>
+      <td><span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-dim)">${e.id}</span>
+          ${e.source === 'card' ? '<br><span class="source-card">card</span>' : ''}</td>
+      <td><span class="project-tag">${e.project || '—'}</span></td>
+      <td><span class="type-badge type-${e.type}">${e.type}</span></td>
+      <td style="font-size:0.72rem;color:var(--text-muted)">${e.category || '—'}</td>
+      <td class="desc-col">${e.description}</td>
+      <td style="font-size:0.72rem">${e.probability || '—'}</td>
+      <td style="font-size:0.72rem">${e.impact || '—'}</td>
+      <td><span class="score-badge score-${e.risk_score}">${e.risk_score || '—'}</span></td>
+      <td style="font-size:0.72rem;color:var(--text-dim);white-space:nowrap">${e.response_strategy || '—'}</td>
+      <td><span class="status-badge status-${(e.status||'').replace(/\s/g,'')}">${e.status || '—'}</span></td>
+      <td style="font-size:0.72rem;white-space:nowrap">${e.owner || '—'}</td>
+      <td style="font-family:var(--font-mono);font-size:0.65rem;white-space:nowrap;color:var(--text-dim)">${e.target_date || '—'}</td>
+      <td class="${trendClass(e.trend)}">${e.trend || '→'}</td>
+      <td class="notes-col">${e.notes || '—'}</td>
+    </tr>
+  `).join('');
+}
+
+function renderRaid() {
+  // Reference cards
+  const grid = document.getElementById('raid-grid');
+  grid.innerHTML = Object.entries(raidData).map(([key, r]) => `
+    <div class="raid-card" style="--raid-color:${r.color};--raid-letter:'${r.label}'">
+      <div class="raid-header">
+        <span class="raid-icon">${r.icon}</span>
+        <span class="raid-label">${r.label}</span>
+        <span class="raid-letter-badge">${key}</span>
+      </div>
+      <p class="raid-desc">${r.description}</p>
+      <div class="raid-example">
+        <strong>Example</strong>
+        ${r.example}
+      </div>
+    </div>
+  `).join('');
+
+  // Corrected flow diagram — one step per Kanban column
+  const flowSteps = document.getElementById('raid-flow-steps');
+  flowSteps.innerHTML = RAID_FLOW_COLS.map(col => {
+    const dots = col.entries.map(e =>
+      `<div class="flow-dot" style="--step-color:${e.color}">${e.key}</div>`
+    ).join('');
+    return `
+      <div class="flow-step">
+        <div class="flow-step-col-label">${col.col}</div>
+        <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-bottom:8px">${dots}</div>
+        <div class="flow-step-sub">${col.note}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function loadAll() {
+  // Use inline data injected by Flask; fall back to fetch if running standalone
+  if (typeof INLINE_DATA !== "undefined" && INLINE_DATA.kanban) {
+    kanbanData   = INLINE_DATA.kanban;
+    raidData     = INLINE_DATA.raid;
+    discoveryData = INLINE_DATA.discovery;
+    workstreamData = INLINE_DATA.workstreams;
+    raidLogData  = INLINE_DATA.raid_log;
+    filteredRaidData = [...raidLogData];
+    renderKanban();
+    renderRaid();
+    populateFilterOptions();
+    applyFilters();
+    renderDiscovery();
+    renderWorkstreams();
+  } else {
+    // Fallback: fetch from API (when Flask serves without template injection)
+    Promise.all([
+      fetch("/api/kanban").then(r => r.json()),
+      fetch("/api/raid").then(r => r.json()),
+      fetch("/api/discovery").then(r => r.json()),
+      fetch("/api/workstreams").then(r => r.json()),
+      fetch("/api/raid_log").then(r => r.json()),
+    ]).then(([k, r, d, w, rl]) => {
+      kanbanData   = k;
+      raidData     = r;
+      discoveryData = d;
+      workstreamData = w;
+      raidLogData  = rl;
+      filteredRaidData = [...raidLogData];
+      renderKanban();
+      renderRaid();
+      populateFilterOptions();
+      applyFilters();
+      renderDiscovery();
+      renderWorkstreams();
+    }).catch(err => console.error("Data load failed:", err));
+  }
 }
 
 // ── View switching ───────────────────────────────────────────────────────────
@@ -1165,7 +1664,14 @@ function renderKanban() {
       const isDone = col.id === 'done';
       const ageClass = isDone ? '' : (card.age_days > 5 ? 'critical' : card.age_days > 2 ? 'aging' : '');
       const ageLabel = card.age_days === 0 ? 'new' : `${card.age_days}d`;
-      const raidBadge = card.raid_flags ? `<span class="tag tag-raid">⚑ RAID</span>` : '';
+      // Show RAID badge if card has inline flags OR standalone log entries for its project
+      let cardProject = 'Internal';
+      for (const sep of [' — ', ' - ']) {
+        if (card.title.includes(sep)) { cardProject = card.title.split(sep).pop().trim(); break; }
+      }
+      const hasRaid = card.raid_flags ||
+        raidLogData.some(e => e.source === 'log' && e.project === cardProject);
+      const raidBadge = hasRaid ? `<span class="tag tag-raid">⚑ RAID</span>` : '';
       cardEl.className = 'kanban-card';
       cardEl.id = 'card-el-' + card.id;
       cardEl.style.setProperty('--card-accent', col.accent);
@@ -1297,19 +1803,44 @@ function renderCardDetail(card, col, colId) {
         <div class="cdb-section-label">Key Assumption</div>
         <div class="cdb-desc" style="color:var(--orange)">${card.assumptions}</div>
       ` : ''}
-      ${raidItems.length ? `
-        <div class="cdb-section-label">RAID Flags</div>
-        ${raidItems.map(flag => {
-          const type = flag[0];
-          const text = flag.slice(2);
-          const colors = {R:'var(--red)',A:'var(--orange)',I:'var(--red)',D:'var(--purple)'};
-          const labels = {R:'Risk',A:'Assumption',I:'Issue',D:'Dependency'};
-          return `<div class="cdb-raid-flag" style="--flag-color:${colors[type]||'var(--blue)'}">
-            <span class="cdb-raid-type">${labels[type]||type}</span>
-            <span class="cdb-raid-text">${text}</span>
-          </div>`;
-        }).join('')}
-      ` : ''}
+      ${(() => {
+        // Derive project name the same way the backend does
+        let project = 'Internal';
+        for (const sep of [' — ', ' - ']) {
+          if (card.title.includes(sep)) {
+            project = card.title.split(sep).pop().trim();
+            break;
+          }
+        }
+        // Card-derived entries (inline flags)
+        const cardPrefix = 'C-' + card.id;
+        const hasCardEntries = raidLogData.some(e => e.id && e.id.startsWith(cardPrefix));
+        // Standalone log entries for this project
+        const projectEntries = raidLogData.filter(e => e.source === 'log' && e.project === project);
+        const hasProjectEntries = projectEntries.length > 0;
+        const showButton = raidItems.length > 0 || hasCardEntries || hasProjectEntries;
+
+        if (!showButton) return '';
+
+        const flagsHtml = raidItems.length ? `
+          <div class="cdb-section-label">RAID Flags</div>
+          ${raidItems.map(flag => {
+            const type = flag[0];
+            const text = flag.slice(2);
+            const colors = {R:'var(--red)',A:'var(--orange)',I:'var(--red)',D:'var(--purple)'};
+            const labels = {R:'Risk',A:'Assumption',I:'Issue',D:'Dependency'};
+            return '<div class="cdb-raid-flag" style="--flag-color:' + (colors[type]||'var(--blue)') + '">' +
+              '<span class="cdb-raid-type">' + (labels[type]||type) + '</span>' +
+              '<span class="cdb-raid-text">' + text + '</span>' +
+              '</div>';
+          }).join('')}` : '';
+
+        const totalEntries = (hasCardEntries ? raidLogData.filter(e => e.id && e.id.startsWith(cardPrefix)).length : 0)
+                           + (hasProjectEntries ? projectEntries.length : 0);
+        const btnLabel = 'View ' + totalEntries + ' RAID ' + (totalEntries === 1 ? 'entry' : 'entries') + ' →';
+
+        return flagsHtml + `<button class="cdb-raid-link" onclick="goToRaidLog(${card.id}, '` + project + `')">${btnLabel}</button>`;
+      })()}
       <div class="cdb-section-label" style="margin-top:10px">Exit Criteria</div>
       <ul class="checklist">${col.exit_criteria.map(e => `<li>${e}</li>`).join('')}</ul>
     </div>
@@ -1321,35 +1852,6 @@ function closeCardDetail(colId) {
   document.getElementById('card-detail-' + colId).classList.remove('open');
   document.querySelectorAll('.kanban-card').forEach(el => el.classList.remove('selected'));
   activeCardId = null;
-}
-
-// ── RAID ─────────────────────────────────────────────────────────────────────
-
-function renderRaid() {
-  const grid = document.getElementById('raid-grid');
-  grid.innerHTML = Object.entries(raidData).map(([key, r]) => `
-    <div class="raid-card" style="--raid-color:${r.color};--raid-letter:'${r.label}'">
-      <div class="raid-header">
-        <span class="raid-icon">${r.icon}</span>
-        <span class="raid-label">${r.label}</span>
-        <span class="raid-letter-badge">${key}</span>
-      </div>
-      <p class="raid-desc">${r.description}</p>
-      <div class="raid-example">
-        <strong>BlastPoint Example</strong>
-        ${r.example}
-      </div>
-    </div>
-  `).join('');
-
-  const flowSteps = document.getElementById('raid-flow-steps');
-  flowSteps.innerHTML = RACI_FLOW.map(step => `
-    <div class="flow-step" style="--step-color:${step.color}">
-      <div class="flow-dot">${step.key}</div>
-      <div class="flow-step-title">${step.col}</div>
-      <div class="flow-step-sub">${step.text}</div>
-    </div>
-  `).join('');
 }
 
 // ── DISCOVERY ────────────────────────────────────────────────────────────────
@@ -1476,6 +1978,62 @@ function renderWorkstreams() {
 }
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
+
+function goToRaidLog(cardId, project) {
+  // Collect matching entries: card-derived (C-{id}*) + standalone log entries for this project
+  const prefix = 'C-' + cardId;
+  const matchingEntries = raidLogData.filter(e =>
+    (e.id && e.id.startsWith(prefix)) ||
+    (e.source === 'log' && e.project === project)
+  );
+
+  // Switch to RAID view
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-raid').classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => {
+    if (b.textContent === 'RAID Log') b.classList.add('active');
+  });
+
+  // Close the card detail panel
+  const card = kanbanData.cards.find(c => c.id === cardId);
+  if (card) closeCardDetail(card.column);
+
+  if (matchingEntries.length) {
+    filteredRaidData = matchingEntries;
+    renderRaidTable();
+    renderRaidSummary();
+    const label = project && project !== 'Internal' ? project : (card ? card.title : `Card #${cardId}`);
+    showRaidFilterBanner(label, matchingEntries.length);
+  } else {
+    clearFilters();
+  }
+}
+
+function showRaidFilterBanner(cardTitle, count) {
+  // Remove any existing banner
+  const existing = document.getElementById('raid-filter-banner');
+  if (existing) existing.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'raid-filter-banner';
+  banner.className = 'raid-filter-banner';
+  banner.innerHTML = `
+    <span class="rfb-icon">⚑</span>
+    <span class="rfb-text">Showing ${count} RAID ${count === 1 ? 'entry' : 'entries'} for: <strong>${cardTitle}</strong></span>
+    <button class="rfb-clear" onclick="clearRaidFilterBanner()">✕ Show all entries</button>
+  `;
+  // Insert before the table
+  const tableWrap = document.getElementById('raid-table').closest('.raid-table-wrap');
+  tableWrap.parentNode.insertBefore(banner, tableWrap);
+}
+
+function clearRaidFilterBanner() {
+  const banner = document.getElementById('raid-filter-banner');
+  if (banner) banner.remove();
+  clearFilters();
+}
+
 loadAll();
 </script>
 </body>
