@@ -3617,32 +3617,46 @@ const SOW_PIPELINE_STEPS = [
     output: 'ROM estimates with confidence tiers'
   },
   {
-    num: '04', title: 'Sizing Review', color: '#7c3aed',
-    sub: 'Consistency + RAID pass',
-    detail: ['Group review for consistency across owners', 'Surface disagreements — re-estimate if needed', 'Critical path check vs SOW committed dates', 'Date gaps → Risk entry in RAID immediately'],
-    output: 'Agreed ROM, critical path, RAID additions'
+    num: '04', title: 'Sizing Review & Serialization', color: '#7c3aed',
+    sub: 'Lock estimates · Sequence the work',
+    detail: [
+      'Each owner presents their estimate — no group anchoring before this point',
+      'Challenge outliers: surface disagreements, re-estimate if needed',
+      'Critical path checked against SOW committed dates',
+      'Date gaps logged as Risk entries in RAID immediately',
+      'Estimates signed off before moving to Phase 2',
+      'Predecessor and successor relationships mapped for every task',
+      'Critical path confirmed against locked estimates',
+      'Cross-workstream dependencies flagged as RAID D entries with owners',
+      'Circular dependency check — resolve before closing the session',
+    ],
+    output: 'Agreed ROM, signed-off critical path, dependency graph, RAID additions',
+    phases: [
+      {
+        label: 'Phase 1 — Sizing Lock', duration: '45 min',
+        items: ['Owner presents each estimate', 'Group challenges outliers', 'Critical path vs committed date', 'Date gaps → Risk entries in RAID', 'Estimates locked before sequencing opens']
+      },
+      {
+        label: 'Phase 2 — Sequencing', duration: '45 min',
+        items: ['Predecessor/successor mapping', 'Critical path confirmed on locked estimates', 'Cross-workstream deps → RAID D entries', 'Circular dependency check']
+      },
+    ]
   },
   {
-    num: '05', title: 'Serialization', color: '#10b981',
-    sub: 'Sequence the work',
-    detail: ['Map predecessors and successors per task', 'Identify critical path explicitly', 'Cross-workstream dependencies flagged as RAID D entries', 'Confirm no circular dependencies'],
-    output: 'Dependency graph, sequenced task list'
-  },
-  {
-    num: '06', title: 'DoR Gate', color: '#f59e0b',
+    num: '05', title: 'DoR Gate', color: '#f59e0b',
     sub: 'Definition of Ready',
     detail: ['AC written for every task', 'All dependencies identified and sequenced', 'Owner confirmed and available', 'ROM reviewed by owner (not top-down assigned)', 'RAID populated from decomposition sessions'],
     output: 'DoR scorecard — all 5 gates must be green',
     dorGates: [
-      { gate: 'AC Written',           items: ['Outcome clearly stated (not just a task title)', 'Acceptance criteria include both happy path and edge cases', 'Success metric is measurable and agreed with the customer'] },
-      { gate: 'Dependencies Mapped',   items: ['All predecessor tasks identified and sequenced', 'Cross-workstream handoffs explicit in task description', 'External dependencies (client IT, vendor) logged in RAID'] },
-      { gate: 'Owner Confirmed',       items: ['Named individual confirmed — not just a team or workstream', 'Owner has capacity in the delivery window', 'Owner has reviewed the task description and AC'] },
-      { gate: 'Sized by Owner',        items: ['ROM estimate provided by the owner who will do the work', 'Confidence tier assigned: High / Medium / Low', 'Low confidence → Assumption entry created in RAID'] },
-      { gate: 'RAID Populated',        items: ['All risks surfaced in decomposition logged', 'Assumptions requiring validation have entries', 'Cross-workstream dependencies tracked as D entries'] },
+      { gate: 'AC Written',          items: ['Outcome clearly stated (not just a task title)', 'Acceptance criteria include both happy path and edge cases', 'Success metric is measurable and agreed with the customer'] },
+      { gate: 'Dependencies Mapped', items: ['All predecessor tasks identified and sequenced', 'Cross-workstream handoffs explicit in task description', 'External dependencies (client IT, vendor) logged in RAID'] },
+      { gate: 'Owner Confirmed',     items: ['Named individual confirmed — not just a team or workstream', 'Owner has capacity in the delivery window', 'Owner has reviewed the task description and AC'] },
+      { gate: 'Sized by Owner',      items: ['ROM estimate provided by the owner who will do the work', 'Confidence tier assigned: High / Medium / Low', 'Low confidence → Assumption entry created in RAID'] },
+      { gate: 'RAID Populated',      items: ['All risks surfaced in decomposition logged', 'Assumptions requiring validation have entries', 'Cross-workstream dependencies tracked as D entries'] },
     ]
   },
   {
-    num: '07', title: '→ Kanban', color: '#06b6d4',
+    num: '06', title: '→ Kanban', color: '#06b6d4',
     sub: 'Cards land in Intake',
     detail: [
       'DoR-cleared cards land in Intake/Backlog — ranked by WSJF score',
@@ -3677,25 +3691,54 @@ function renderSow() {
   renderSowRegister();
 }
 
-function buildDorGatesHtml(step) {
-  if (!step.dorGates) return '';
-  var html = '<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1)">';
-  html += '<div style="font-family:var(--font-mono);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.08em;color:' + step.color + ';margin-bottom:10px">5 Required Gates — Full Checklist</div>';
-  step.dorGates.forEach(function(g) {
-    html += '<div style="margin-bottom:10px">';
-    html += '<div style="display:flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:600;color:#e2e8f0;margin-bottom:4px">';
-    html += '<span style="color:#10b981;font-size:0.7rem">&#10003;</span>';
-    html += '<span>' + g.gate + '</span></div>';
-    g.items.forEach(function(item) {
-      html += '<div style="display:flex;gap:7px;font-size:0.68rem;color:#94a3b8;padding:3px 0 3px 14px;line-height:1.35">';
-      html += '<span style="color:' + step.color + ';flex-shrink:0;margin-top:1px">&middot;</span>';
-      html += '<span>' + item + '</span></div>';
+function buildStepExtrasHtml(step) {
+  var html = '';
+
+  // Phases block (Step 04 — Sizing Review & Serialization)
+  if (step.phases) {
+    html += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1)">';
+    html += '<div style="font-family:var(--font-mono);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.08em;color:' + step.color + ';margin-bottom:10px">Two-Phase Session Agenda</div>';
+    step.phases.forEach(function(p) {
+      html += '<div style="margin-bottom:12px">';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">';
+      html += '<span style="font-size:0.72rem;font-weight:600;color:#e2e8f0">' + p.label + '</span>';
+      html += '<span style="font-family:var(--font-mono);font-size:0.6rem;color:' + step.color + ';background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:1px 6px">' + p.duration + '</span>';
+      html += '</div>';
+      p.items.forEach(function(item) {
+        html += '<div style="display:flex;gap:7px;font-size:0.68rem;color:#94a3b8;padding:3px 0 3px 14px;line-height:1.35">';
+        html += '<span style="color:' + step.color + ';flex-shrink:0;margin-top:1px">&middot;</span>';
+        html += '<span>' + item + '</span></div>';
+      });
+      html += '</div>';
+    });
+    html += '<div style="font-size:0.65rem;color:rgba(255,255,255,0.35);font-style:italic;margin-top:4px">Gate between phases: estimates must be locked before sequencing opens.</div>';
+    html += '</div>';
+  }
+
+  // DoR gates block (Step 05)
+  if (step.dorGates) {
+    html += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1)">';
+    html += '<div style="font-family:var(--font-mono);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.08em;color:' + step.color + ';margin-bottom:10px">5 Required Gates — Full Checklist</div>';
+    step.dorGates.forEach(function(g) {
+      html += '<div style="margin-bottom:10px">';
+      html += '<div style="display:flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:600;color:#e2e8f0;margin-bottom:4px">';
+      html += '<span style="color:#10b981;font-size:0.7rem">&#10003;</span>';
+      html += '<span>' + g.gate + '</span></div>';
+      g.items.forEach(function(item) {
+        html += '<div style="display:flex;gap:7px;font-size:0.68rem;color:#94a3b8;padding:3px 0 3px 14px;line-height:1.35">';
+        html += '<span style="color:' + step.color + ';flex-shrink:0;margin-top:1px">&middot;</span>';
+        html += '<span>' + item + '</span></div>';
+      });
+      html += '</div>';
     });
     html += '</div>';
-  });
-  html += '</div>';
+  }
+
   return html;
 }
+
+// Alias for any remaining references
+function buildDorGatesHtml(step) { return buildStepExtrasHtml(step); }
 
 function renderSowPipeline() {
   const el = document.getElementById('sow-pipeline');
@@ -3703,16 +3746,15 @@ function renderSowPipeline() {
   el.innerHTML = SOW_PIPELINE_STEPS.map(function(step, i) {
     const isActive  = activeSowStep === i;
     const isLast    = i === SOW_PIPELINE_STEPS.length - 1;
-    const hasDor    = !!step.dorGates;
+    const hasDor    = !!(step.dorGates || step.phases);
     const detailStyle = hasDor
       ? 'min-width:340px;max-height:75vh;overflow-y:auto;'
       : '';
 
-    const detailItems = step.detail.map(function(d) {
-      return '<li>' + d + '</li>';
-    }).join('');
+    const detailItems = step.detail
+      .filter(function(d) { return !d.startsWith('──'); })
+      .map(function(d) { return '<li>' + d + '</li>'; }).join('');
 
-    const dorHtml   = buildDorGatesHtml(step);
     const arrowHtml = isLast ? '' : '<div class="sow-step-arrow">&rarr;</div>';
 
     return '<div class="sow-step' + (isActive ? ' active' : '') + '"'
@@ -3725,7 +3767,7 @@ function renderSowPipeline() {
       + '<div class="sow-step-detail" style="' + detailStyle + '">'
       + '<div class="sow-step-detail-title">' + step.title + '</div>'
       + '<ul>' + detailItems + '</ul>'
-      + dorHtml
+      + buildStepExtrasHtml(step)
       + '<div class="sow-step-output"><strong>Output:</strong> ' + step.output + '</div>'
       + '</div>'
       + '</div>';
@@ -3746,14 +3788,13 @@ function toggleSowStep(i, e) {
 
   // Build content for the overlay
   const step = SOW_PIPELINE_STEPS[i];
-  const detailItems = step.detail.map(function(d) {
-    return '<li>' + d + '</li>';
-  }).join('');
-  const dorHtml = buildDorGatesHtml(step);
+  const detailItems = step.detail
+    .filter(function(d) { return !d.startsWith('──'); })
+    .map(function(d) { return '<li>' + d + '</li>'; }).join('');
   overlay.innerHTML =
     '<div style="font-family:var(--font-mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:' + step.color + ';margin-bottom:10px">STEP ' + step.num + ' — ' + step.title + '</div>'
     + '<ul style="list-style:none;padding:0;margin:0 0 8px 0;display:flex;flex-direction:column;gap:5px">' + detailItems + '</ul>'
-    + dorHtml
+    + buildStepExtrasHtml(step)
     + '<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);font-size:0.68rem;color:rgba(255,255,255,0.4)"><strong style="color:rgba(255,255,255,0.6)">Output:</strong> ' + step.output + '</div>';
 
   // Position overlay below the clicked step tile
@@ -3762,13 +3803,13 @@ function toggleSowStep(i, e) {
     const rect = stepEls[i].getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     let left = rect.left;
-    const overlayWidth = step.dorGates ? 380 : 280;
+    const overlayWidth = (step.dorGates || step.phases) ? 380 : 280;
     if (left + overlayWidth > viewportWidth - 16) {
       left = viewportWidth - overlayWidth - 16;
     }
     overlay.style.top  = (rect.bottom + 8) + 'px';
     overlay.style.left = left + 'px';
-    overlay.style.minWidth = (step.dorGates ? '360px' : '260px');
+    overlay.style.minWidth = ((step.dorGates || step.phases) ? '360px' : '260px');
   }
   overlay.classList.add('visible');
 }
@@ -3801,7 +3842,7 @@ function renderSowSummary() {
 function sowStepColor(step) {
   const map = {
     '01': '#e94560', '02': '#f5a623', '03': '#00d4ff',
-    '04': '#7c3aed', '05': '#10b981', '06': '#f59e0b', '07': '#06b6d4'
+    '04': '#7c3aed', '05': '#f59e0b', '06': '#06b6d4'
   };
   return map[step] || 'var(--text-dim)';
 }
@@ -3809,7 +3850,7 @@ function sowStepColor(step) {
 function sowStepLabel(step) {
   const map = {
     '01':'SOW Intake', '02':'Decomposition', '03':'Owner Sizing',
-    '04':'Sizing Review', '05':'Serialization', '06':'DoR Gate', '07':'→ Kanban'
+    '04':'Sizing Review & Serialization', '05':'DoR Gate', '06':'→ Kanban'
   };
   return map[step] || step;
 }
@@ -3979,26 +4020,17 @@ var GATE_CHECKS = {
   },
   '04→05': {
     label: 'Step 04 → 05',
-    heading: 'Sizing Review → Serialization',
+    heading: 'Sizing Review & Serialization → DoR Gate',
     checks: [
-      'Group review completed — disagreements resolved or escalated',
-      'Critical path checked against SOW committed date',
-      'Date gaps identified and logged as Risk entries in RAID',
-      'Final agreed ROM recorded for all tasks',
+      'Phase 1 complete: all estimates locked and agreed by the group',
+      'Critical path confirmed against committed dates; date gaps in RAID',
+      'Phase 2 complete: predecessor/successor relationships mapped for every task',
+      'Cross-workstream dependencies logged as RAID D entries with owners',
+      'No circular dependencies identified in the task graph',
     ]
   },
   '05→06': {
     label: 'Step 05 → 06',
-    heading: 'Serialization → DoR Gate',
-    checks: [
-      'Predecessor and successor relationships mapped for every task',
-      'Critical path explicitly identified and documented',
-      'Cross-workstream dependencies logged as RAID D entries with owners',
-      'No circular dependencies exist in the task graph',
-    ]
-  },
-  '06→07': {
-    label: 'Step 06 → 07',
     heading: 'DoR Gate → Kanban Board',
     checks: [
       'Acceptance Criteria written for every task (gate 1/5)',
@@ -4011,7 +4043,7 @@ var GATE_CHECKS = {
 };
 
 // WIP limits per step
-var SOW_WIP = { '01': Infinity, '02': 4, '03': 4, '04': 3, '05': 3, '06': Infinity, '07': Infinity };
+var SOW_WIP = { '01': Infinity, '02': 4, '03': 4, '04': 3, '05': Infinity, '06': Infinity };
 
 function setSowView(mode) {
   sowViewMode = mode;
@@ -4030,14 +4062,14 @@ function renderSowBoard() {
   const board = document.getElementById('sow-board');
   if (!board) return;
 
-  const steps = ['01','02','03','04','05','06','07'];
+  const steps = ['01','02','03','04','05','06'];
   const stepTitles = {
     '01':'SOW Intake', '02':'Decomposition', '03':'Owner Sizing',
-    '04':'Sizing Review', '05':'Serialization', '06':'DoR Gate', '07':'→ Kanban'
+    '04':'Sizing Review & Serialization', '05':'DoR Gate', '06':'→ Kanban'
   };
   const stepColors = {
     '01':'#e94560','02':'#f5a623','03':'#00d4ff',
-    '04':'#7c3aed','05':'#10b981','06':'#f59e0b','07':'#06b6d4'
+    '04':'#7c3aed','05':'#f59e0b','06':'#06b6d4'
   };
   const wsColors = {'Data':'#00d4ff','Platform/Dev':'#7c3aed','Launch':'#10b981','Stakeholders':'#e94560','Customer Success':'#f59e0b'};
 
@@ -4084,7 +4116,7 @@ function renderSowBoard() {
 
       // Gate advance button (not on step 07, not if blocked)
       var gateBtn = '';
-      if (step !== '07') {
+      if (step !== '06') {
         var nextStep   = String(parseInt(step) + 1).padStart(2,'0');
         var gateKey    = step + '→' + nextStep;
         var gateDef    = GATE_CHECKS[gateKey];
