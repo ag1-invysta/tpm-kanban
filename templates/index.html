@@ -675,11 +675,117 @@
   .status-Accepted { background: rgba(245,166,35,0.08); color: var(--orange); border: 1px solid rgba(245,166,35,0.2); }
   .status-Resolved, .status-Validated, .status-Closed { background: rgba(16,185,129,0.08); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
 
-  .trend-up { color: var(--red); font-size: 1rem; }
-  .trend-stable { color: var(--text-dim); font-size: 1rem; }
-  .trend-down { color: var(--green); font-size: 1rem; }
+  .trend-up     { color: var(--red);      font-size: 0.7rem; font-family: var(--font-mono); white-space: nowrap; }
+  .trend-stable  { color: var(--text-dim); font-size: 0.7rem; font-family: var(--font-mono); white-space: nowrap; }
+  .trend-down    { color: var(--green);    font-size: 0.7rem; font-family: var(--font-mono); white-space: nowrap; }
+  .trend-arrow   { font-size: 0.9rem; margin-right: 3px; }
+
+  /* Custom tooltip for trend cells */
+  .trend-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    cursor: default;
+  }
+  .trend-wrap .trend-tip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e2a38;
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    padding: 7px 11px;
+    font-size: 0.72rem;
+    font-family: var(--font-sans);
+    color: var(--text);
+    white-space: nowrap;
+    max-width: 280px;
+    white-space: normal;
+    line-height: 1.45;
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+  }
+  .trend-wrap .trend-tip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--border-bright);
+  }
+  .trend-wrap:hover .trend-tip {
+    visibility: visible;
+    opacity: 1;
+  }
   .source-card { font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-dim); background: rgba(255,255,255,0.04); padding: 1px 5px; border-radius: 3px; }
   .project-tag { font-size: 0.72rem; color: var(--text); font-weight: 500; }
+
+  /* Project link in RAID table */
+  .project-link {
+    background: none;
+    border: none;
+    padding: 2px 0;
+    color: var(--blue);
+    font-size: 0.72rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: rgba(0,212,255,0.3);
+    text-underline-offset: 3px;
+    transition: color 0.15s, text-decoration-color 0.15s;
+    text-align: left;
+  }
+  .project-link:hover {
+    color: #4de3ff;
+    text-decoration-color: rgba(0,212,255,0.7);
+  }
+
+  /* Kanban project focus states */
+  .kanban-card.project-highlight {
+    box-shadow: 0 0 0 2px var(--card-accent), 0 4px 16px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+    transition: box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+  }
+  .kanban-card.project-dim {
+    opacity: 0.25;
+    transition: opacity 0.2s;
+  }
+
+  /* Kanban project banner */
+  .kanban-project-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.25);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    margin-bottom: 14px;
+    animation: slideDown 0.2s ease;
+  }
+  .kpb-icon { font-size: 1rem; }
+  .kpb-text { font-size: 0.82rem; color: var(--text-muted); flex: 1; }
+  .kpb-text strong { color: var(--text); }
+  .kpb-clear {
+    background: none;
+    border: 1px solid rgba(124,58,237,0.3);
+    color: var(--purple);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .kpb-clear:hover { background: rgba(124,58,237,0.12); }
 
   /* ── RAID REFERENCE DETAILS ─── */
   .raid-ref-details {
@@ -1012,6 +1118,266 @@
   .status-validated { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
   .status-false { background: rgba(233,69,96,0.15); color: var(--red); border: 1px solid rgba(233,69,96,0.3); }
 
+  /* ── DISCOVERY REGISTER ─────────────────────────────────── */
+  .disc-toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .disc-search {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+    outline: none;
+    min-width: 220px;
+    transition: border-color 0.15s;
+  }
+  .disc-search:focus { border-color: var(--blue); }
+  .disc-summary-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-left: auto;
+  }
+  .disc-chip {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    padding: 3px 9px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .disc-chip-complete  { background: rgba(16,185,129,0.1);  color: var(--green);  border: 1px solid rgba(16,185,129,0.25); }
+  .disc-chip-progress  { background: rgba(0,212,255,0.08);  color: var(--blue);   border: 1px solid rgba(0,212,255,0.2); }
+  .disc-chip-blocked   { background: rgba(233,69,96,0.1);   color: var(--red);    border: 1px solid rgba(233,69,96,0.25); }
+
+  /* Discovery reference checklist wrapper */
+  .disc-ref-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .disc-ref-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 18px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .disc-ref-header:hover { background: var(--surface2); }
+  .disc-ref-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+  .disc-ref-icon { font-size: 0.9rem; }
+  .disc-ref-subtitle {
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: var(--font-sans);
+  }
+  .disc-ref-toggle {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    transition: color 0.15s;
+  }
+  .disc-ref-header:hover .disc-ref-toggle { color: var(--blue); }
+  .disc-ref-body {
+    padding: 18px;
+    transition: all 0.25s ease;
+  }
+  .disc-ref-body.collapsed { display: none; }
+  .disc-ref-footer {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .disc-ref-note {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* Discovery table */
+  .disc-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 20px;
+  }
+  .disc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+  .disc-table thead {
+    background: var(--surface2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .disc-table th {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-bright);
+    white-space: nowrap;
+  }
+  .disc-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    vertical-align: middle;
+    color: var(--text-muted);
+  }
+  .disc-table tr:last-child td { border-bottom: none; }
+  .disc-table tr.disc-row { cursor: pointer; transition: background 0.12s; }
+  .disc-table tr.disc-row:hover td { background: rgba(255,255,255,0.03); }
+  .disc-table tr.disc-row.selected td { background: rgba(0,212,255,0.05); }
+
+  /* Score bar */
+  .score-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .score-bar {
+    width: 48px;
+    height: 5px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .score-val { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-dim); }
+
+  /* Overall completion badge */
+  .disc-pct-badge {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .disc-pct-100 { background: rgba(16,185,129,0.12); color: var(--green);   border: 1px solid rgba(16,185,129,0.25); }
+  .disc-pct-hi  { background: rgba(0,212,255,0.08);  color: var(--blue);    border: 1px solid rgba(0,212,255,0.2); }
+  .disc-pct-mid { background: rgba(245,166,35,0.1);  color: var(--orange);  border: 1px solid rgba(245,166,35,0.2); }
+  .disc-pct-lo  { background: rgba(233,69,96,0.1);   color: var(--red);     border: 1px solid rgba(233,69,96,0.25); }
+
+  /* Days open indicator */
+  .days-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .days-ok      { color: var(--text-dim); }
+  .days-warn    { color: var(--orange); background: rgba(245,166,35,0.08); }
+  .days-alert   { color: var(--red);    background: rgba(233,69,96,0.1); }
+  .days-sla     { font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-dim); display: block; }
+
+  /* Blocker cell */
+  .disc-blocker {
+    font-size: 0.68rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .disc-blocker-badge {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── DISCOVERY DETAIL PANEL ─── */
+  .disc-detail-panel {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    animation: slideDown 0.2s ease;
+  }
+  .disc-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .disc-detail-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .disc-detail-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .disc-detail-close {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .disc-detail-close:hover { border-color: var(--red); color: var(--red); }
+  .disc-detail-body {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 20px;
+  }
+  .disc-detail-checklists {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    align-content: start;
+  }
+
   /* ── WORKSTREAMS VIEW ────────────────────────────────────── */
   .workstream-flow {
     display: flex;
@@ -1133,6 +1499,53 @@
     font-weight: 700;
   }
   .raci-A { background: rgba(233,69,96,0.15); color: var(--red); border: 1px solid rgba(233,69,96,0.3); }
+  
+  /* RACI header row + legend */
+  .raci-header-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  /* RACI definitions callout — 2×2 grid */
+  .raci-rule-callout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .raci-rule-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .raci-rule-key {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .raci-rule-text {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .raci-rule-text strong { color: var(--text); }
+  .raci-rule-text em { color: var(--orange); font-style: normal; font-weight: 600; }
   .raci-R { background: rgba(0,212,255,0.1); color: var(--blue); border: 1px solid rgba(0,212,255,0.2); }
   .raci-C { background: rgba(245,166,35,0.1); color: var(--orange); border: 1px solid rgba(245,166,35,0.25); }
   .raci-I { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
@@ -1315,13 +1728,93 @@
   <div id="view-discovery" class="view">
     <div class="page-header">
       <h1>Structured <span>Discovery</span></h1>
-      <p>Discovery is a continuous workstream — not a one-time kickoff meeting. Every open question gets logged, assigned an owner, and aged against an SLA.</p>
+      <p>Discovery is a continuous workstream — not a one-time kickoff meeting. Each project has its own checklist record. Select a project to review its status, or view the full register below.</p>
     </div>
-    <div class="discovery-layout">
-      <div>
-        <div class="discovery-checklist-grid" id="discovery-grid"></div>
+
+    <!-- Reference checklist: collapsible 2x2 grid -->
+    <div class="disc-ref-wrap" id="disc-ref-wrap">
+      <div class="disc-ref-header" onclick="toggleDiscRef()">
+        <span class="disc-ref-title">
+          <span class="disc-ref-icon">📋</span>
+          Discovery Checklist Reference
+          <span class="disc-ref-subtitle" id="disc-ref-subtitle"></span>
+        </span>
+        <span class="disc-ref-toggle" id="disc-ref-toggle">▲ Collapse</span>
       </div>
-      <div class="sidebar" id="discovery-sidebar"></div>
+      <div class="disc-ref-body" id="disc-ref-body">
+        <div class="discovery-checklist-grid" id="discovery-grid"></div>
+        <div class="disc-ref-footer">
+          <span class="disc-ref-note">Checkboxes above are a global reference — not tied to any project. Use the register below to track per-project completion.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Register header: search + filters -->
+    <div class="disc-toolbar">
+      <input type="text" id="disc-search" class="disc-search" placeholder="Search project, owner, notes…" oninput="renderDiscoveryRegister()">
+      <div class="filter-group">
+        <label class="filter-label">Status</label>
+        <select id="disc-filter-status" onchange="renderDiscoveryRegister()">
+          <option value="">All</option>
+          <option value="Complete">Complete</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Blocked">Blocked</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Owner</label>
+        <select id="disc-filter-owner" onchange="renderDiscoveryRegister()">
+          <option value="">All Owners</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Sort By</label>
+        <select id="disc-sort" onchange="renderDiscoveryRegister()">
+          <option value="days_open">Days Open</option>
+          <option value="project">Project</option>
+          <option value="status">Status</option>
+          <option value="completion">Completion %</option>
+          <option value="owner">Owner</option>
+        </select>
+      </div>
+      <div class="disc-summary-chips" id="disc-summary-chips"></div>
+    </div>
+
+    <!-- Discovery register table -->
+    <div class="disc-table-wrap">
+      <table class="disc-table" id="disc-table">
+        <thead>
+          <tr>
+            <th>Project / Card</th>
+            <th>Owner</th>
+            <th>Status</th>
+            <th>Stakeholders & Scope</th>
+            <th>Data Readiness</th>
+            <th>Integration</th>
+            <th>Environment</th>
+            <th>Overall</th>
+            <th>Days Open</th>
+            <th>Blocker</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="disc-table-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Detail panel: shown when a row is selected -->
+    <div class="disc-detail-panel" id="disc-detail-panel" style="display:none">
+      <div class="disc-detail-header">
+        <div>
+          <div class="disc-detail-title" id="disc-detail-title"></div>
+          <div class="disc-detail-meta" id="disc-detail-meta"></div>
+        </div>
+        <button class="disc-detail-close" onclick="closeDiscoveryDetail()">✕</button>
+      </div>
+      <div class="disc-detail-body">
+        <div class="disc-detail-checklists" id="disc-detail-checklists"></div>
+        <div class="disc-detail-sidebar" id="disc-detail-sidebar"></div>
+      </div>
     </div>
   </div>
 
@@ -1333,7 +1826,27 @@
     </div>
     <div id="workstream-flow" class="workstream-flow"></div>
     <div class="raci-section">
-      <h2>RACI-Lite Matrix — Key Decisions & Handoffs</h2>
+      <div class="raci-header-row">
+        <h2>RACI-Lite Matrix — Key Decisions &amp; Handoffs</h2>
+      </div>
+      <div class="raci-rule-callout">
+        <div class="raci-rule-item">
+          <span class="raci-rule-key raci-A">A</span>
+          <span class="raci-rule-text"><strong>Accountable</strong> — single owner who answers for the outcome. There can only be <em>one</em> A per activity. If two teams share A, no one is truly accountable.</span>
+        </div>
+        <div class="raci-rule-item">
+          <span class="raci-rule-key raci-R">R</span>
+          <span class="raci-rule-text"><strong>Responsible</strong> — executes the work. Multiple R entries are allowed. The A may also be R, but R alone does not confer ownership.</span>
+        </div>
+        <div class="raci-rule-item">
+          <span class="raci-rule-key raci-C">C</span>
+          <span class="raci-rule-text"><strong>Consulted</strong> — must be asked before the decision is finalised. Their input is required; they have a voice before the decision locks.</span>
+        </div>
+        <div class="raci-rule-item">
+          <span class="raci-rule-key raci-I">I</span>
+          <span class="raci-rule-text"><strong>Informed</strong> — notified after the decision is made. No input required; they need visibility to coordinate downstream work.</span>
+        </div>
+      </div>
       <table class="raci-table" id="raci-table"></table>
     </div>
     <div class="boundary-alert">
@@ -1358,6 +1871,8 @@ let discoveryData = [];
 let workstreamData = {};
 let activeColId = null;
 let checkedItems = {};
+let discoveryLog = [];
+let activeDiscoveryCardId = null;
 
 const WS_COLORS = ['#00d4ff', '#7c3aed', '#10b981', '#f59e0b'];
 // ── RAID FLOW (corrected — maps each type to where it enters the 7-column flow)
@@ -1505,6 +2020,44 @@ function trendClass(t) {
   return 'trend-stable';
 }
 
+function trendLabel(t, type) {
+  const arrow  = t === '↑' ? '↑' : t === '↓' ? '↓' : '→';
+  const label  = t === '↑' ? 'Worsening' : t === '↓' ? 'Improving' : 'Stable';
+  const tip    = trendTooltip(t, type);
+  return `<span class="trend-wrap">
+    <span class="trend-arrow">${arrow}</span>${label}
+    <span class="trend-tip">${tip}</span>
+  </span>`;
+}
+
+// Returns a type-aware tooltip explaining what the trend means for this specific RAID type
+function trendTooltip(t, type) {
+  const tooltips = {
+    R: {
+      '↑': 'Risk worsening — probability or impact has increased since last review',
+      '→': 'Risk stable — no change in probability or impact',
+      '↓': 'Risk receding — mitigation is working, severity decreasing',
+    },
+    A: {
+      '↑': 'Assumption weakening — new contradicting evidence found, needs urgent validation',
+      '→': 'Assumption status unchanged — validation still pending',
+      '↓': 'Assumption strengthening — evidence gathered is supporting it',
+    },
+    I: {
+      '↑': 'Issue escalating — blockers compounding or scope of impact expanding',
+      '→': 'Issue stable — no change in severity, resolution in progress',
+      '↓': 'Issue resolving — active progress toward closure',
+    },
+    D: {
+      '↑': 'Dependency at increasing risk — upstream delay growing',
+      '→': 'Dependency unchanged — still outstanding, no new risk signal',
+      '↓': 'Dependency being cleared — upstream work progressing toward completion',
+    },
+  };
+  const arrow = t === '↑' ? '↑' : t === '↓' ? '↓' : '→';
+  return (tooltips[type] && tooltips[type][arrow]) || 'Trend direction for this item';
+}
+
 function renderRaidTable() {
   const tbody = document.getElementById('raid-table-body');
   const empty = document.getElementById('raid-empty');
@@ -1518,7 +2071,10 @@ function renderRaidTable() {
     <tr>
       <td><span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-dim)">${e.id}</span>
           ${e.source === 'card' ? '<br><span class="source-card">card</span>' : ''}</td>
-      <td><span class="project-tag">${e.project || '—'}</span></td>
+      <td>${e.project && e.project !== 'Internal' && e.project !== '—'
+        ? `<button class="project-link" onclick="goToKanbanProject('${e.project.replace(/'/g, "\\'")}')" title="View on Kanban board">${e.project}</button>`
+        : `<span class="project-tag">${e.project || '—'}</span>`
+      }</td>
       <td><span class="type-badge type-${e.type}">${e.type}</span></td>
       <td style="font-size:0.72rem;color:var(--text-muted)">${e.category || '—'}</td>
       <td class="desc-col">${e.description}</td>
@@ -1529,7 +2085,7 @@ function renderRaidTable() {
       <td><span class="status-badge status-${(e.status||'').replace(/\s/g,'')}">${e.status || '—'}</span></td>
       <td style="font-size:0.72rem;white-space:nowrap">${e.owner || '—'}</td>
       <td style="font-family:var(--font-mono);font-size:0.65rem;white-space:nowrap;color:var(--text-dim)">${e.target_date || '—'}</td>
-      <td class="${trendClass(e.trend)}">${e.trend || '→'}</td>
+      <td class="${trendClass(e.trend)}">${trendLabel(e.trend || '→', e.type)}</td>
       <td class="notes-col">${e.notes || '—'}</td>
     </tr>
   `).join('');
@@ -1575,6 +2131,7 @@ function loadAll() {
     kanbanData   = INLINE_DATA.kanban;
     raidData     = INLINE_DATA.raid;
     discoveryData = INLINE_DATA.discovery;
+  discoveryLog = INLINE_DATA.discovery_log || [];
     workstreamData = INLINE_DATA.workstreams;
     raidLogData  = INLINE_DATA.raid_log;
     filteredRaidData = [...raidLogData];
@@ -1596,6 +2153,7 @@ function loadAll() {
       kanbanData   = k;
       raidData     = r;
       discoveryData = d;
+      if (INLINE_DATA.discovery_log) discoveryLog = INLINE_DATA.discovery_log;
       workstreamData = w;
       raidLogData  = rl;
       filteredRaidData = [...raidLogData];
@@ -1616,6 +2174,8 @@ function switchView(name, btn) {
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById('view-' + name).classList.add('active');
   btn.classList.add('active');
+  // Clear Kanban project highlight when navigating away
+  if (name !== 'kanban') clearKanbanProjectFilter();
 }
 
 // ── KANBAN ───────────────────────────────────────────────────────────────────
@@ -1856,89 +2416,350 @@ function closeCardDetail(colId) {
 
 // ── DISCOVERY ────────────────────────────────────────────────────────────────
 
-const ASSUMPTIONS = [
-  { text: "SSO already configured in customer environment", status: "unvalidated" },
-  { text: "Customer data warehouse has REST API", status: "false" },
-  { text: "Regulatory constraints are limited to GDPR", status: "validated" },
-  { text: "Engineering team has AWS access provisioned", status: "unvalidated" },
-];
+// ── DISCOVERY REGISTER ───────────────────────────────────────────────────────
+
+// Category order: Stakeholders & Scope first (per requirements)
+const DISC_CAT_ORDER = ['Stakeholders & Scope', 'Data Readiness', 'Integration', 'Environment'];
+
+function discScoreColor(score) {
+  if (score >= 5) return '#10b981';
+  if (score >= 4) return '#00d4ff';
+  if (score >= 3) return '#f59e0b';
+  return '#e94560';
+}
+
+function discPctClass(pct) {
+  if (pct === 100) return 'disc-pct-100';
+  if (pct >= 75)   return 'disc-pct-hi';
+  if (pct >= 40)   return 'disc-pct-mid';
+  return 'disc-pct-lo';
+}
+
+function discDaysClass(days, status) {
+  if (status === 'Complete') return 'days-ok';
+  if (days >= 7)  return 'days-alert';
+  if (days >= 3)  return 'days-warn';
+  return 'days-ok';
+}
+
+function discSlaTip(days, status) {
+  if (status === 'Complete') return '';
+  if (days >= 7)  return 'Exec visibility required';
+  if (days >= 3)  return 'Escalate to TPM';
+  return '';
+}
+
+function entryPct(e) {
+  const scores = [e.stakeholders_scope, e.data_readiness, e.integration, e.environment];
+  return Math.round((scores.reduce((a,b) => a + b, 0) / 20) * 100);
+}
+
+function discBlockerHtml(blocker) {
+  if (!blocker) return '<span style="color:var(--text-dim);font-size:0.7rem">—</span>';
+  const t = blocker[0];
+  const text = blocker.slice(2);
+  const colors = {R:'var(--red)',A:'var(--orange)',I:'#ef4444',D:'var(--purple)'};
+  const c = colors[t] || 'var(--blue)';
+  return `<div class="disc-blocker">
+    <span class="disc-blocker-badge" style="background:${c}22;color:${c};border:1px solid ${c}44">${t}</span>
+    <span style="color:var(--text-muted);font-size:0.68rem">${text}</span>
+  </div>`;
+}
+
+function getCardTitle(cardId) {
+  const card = kanbanData.cards ? kanbanData.cards.find(c => c.id === cardId) : null;
+  return card ? card.title : `Card #${cardId}`;
+}
+
+let discRefCollapsed = false;
+
+function toggleDiscRef() {
+  discRefCollapsed = !discRefCollapsed;
+  const body   = document.getElementById('disc-ref-body');
+  const toggle = document.getElementById('disc-ref-toggle');
+  body.classList.toggle('collapsed', discRefCollapsed);
+  toggle.textContent = discRefCollapsed ? '▼ Expand' : '▲ Collapse';
+}
 
 function renderDiscovery() {
+  // Render the reference checklist grid (2x2, Stakeholders & Scope first)
   const grid = document.getElementById('discovery-grid');
-  grid.innerHTML = discoveryData.map(section => `
-    <div class="discovery-section">
-      <div class="discovery-section-header">
-        <span class="discovery-icon">${section.icon}</span>
-        <h3>${section.category}</h3>
-      </div>
-      ${section.items.map((item, i) => {
-        const key = section.category + i;
-        return `
-          <div class="discovery-item ${checkedItems[key] ? 'checked' : ''}" onclick="toggleCheck('${key}', this)">
+  if (grid) {
+    const orderedSections = DISC_CAT_ORDER
+      .map(name => discoveryData.find(s => s.category === name))
+      .filter(Boolean);
+    grid.innerHTML = orderedSections.map(section => {
+      const total = section.items.length;
+      const done  = section.items.filter((_, i) => checkedItems[section.category + i]).length;
+      return `
+        <div class="discovery-section">
+          <div class="discovery-section-header">
+            <span class="discovery-icon">${section.icon}</span>
+            <h3>${section.category}</h3>
+            <span style="margin-left:auto;font-family:var(--font-mono);font-size:0.62rem;color:var(--text-dim)">${done}/${total}</span>
+          </div>
+          ${section.items.map((item, i) => {
+            const key = section.category + i;
+            return `<div class="discovery-item ${checkedItems[key] ? 'checked' : ''}" onclick="toggleCheck('${key}', this)">
+              <div class="discovery-checkbox"></div>
+              <span class="discovery-text">${item}</span>
+            </div>`;
+          }).join('')}
+        </div>`;
+    }).join('');
+
+    // Update subtitle with overall progress
+    const totalItems = discoveryData.reduce((a, s) => a + s.items.length, 0);
+    const doneItems  = Object.values(checkedItems).filter(Boolean).length;
+    const sub = document.getElementById('disc-ref-subtitle');
+    if (sub) sub.textContent = doneItems > 0 ? `— ${doneItems} of ${totalItems} items checked` : '';
+  }
+
+  // Populate owner filter
+  const owners = [...new Set(discoveryLog.map(e => e.owner).filter(Boolean))].sort();
+  const ownerSel = document.getElementById('disc-filter-owner');
+  if (ownerSel && ownerSel.options.length <= 1) {
+    owners.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o; opt.textContent = o;
+      ownerSel.appendChild(opt);
+    });
+  }
+
+  renderDiscoverySummary();
+  renderDiscoveryRegister();
+}
+
+function renderDiscoverySummary() {
+  const chips = document.getElementById('disc-summary-chips');
+  if (!chips) return;
+  const complete   = discoveryLog.filter(e => e.status === 'Complete').length;
+  const inProgress = discoveryLog.filter(e => e.status === 'In Progress').length;
+  const blocked    = discoveryLog.filter(e => e.status === 'Blocked').length;
+  chips.innerHTML = `
+    <span class="disc-chip disc-chip-complete">✓ ${complete} Complete</span>
+    <span class="disc-chip disc-chip-progress">● ${inProgress} In Progress</span>
+    <span class="disc-chip disc-chip-blocked">⚠ ${blocked} Blocked</span>
+  `;
+}
+
+function renderDiscoveryRegister() {
+  const search    = (document.getElementById('disc-search')?.value || '').toLowerCase();
+  const status    = document.getElementById('disc-filter-status')?.value || '';
+  const owner     = document.getElementById('disc-filter-owner')?.value || '';
+  const sortField = document.getElementById('disc-sort')?.value || 'days_open';
+
+  let rows = discoveryLog.filter(e => {
+    if (status && e.status !== status) return false;
+    if (owner && e.owner !== owner) return false;
+    if (search) {
+      const title = getCardTitle(e.card_id).toLowerCase();
+      const hay = [title, e.project, e.owner, e.notes, e.blocker].join(' ').toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  rows.sort((a, b) => {
+    if (sortField === 'days_open')   return b.days_open - a.days_open;
+    if (sortField === 'completion')  return entryPct(b) - entryPct(a);
+    if (sortField === 'status')      return (a.status||'').localeCompare(b.status||'');
+    if (sortField === 'project')     return (a.project||'').localeCompare(b.project||'');
+    if (sortField === 'owner')       return (a.owner||'').localeCompare(b.owner||'');
+    return 0;
+  });
+
+  const tbody = document.getElementById('disc-table-body');
+  if (!tbody) return;
+
+  const catFields = [
+    { key: 'stakeholders_scope', label: 'Stakeholders & Scope' },
+    { key: 'data_readiness',     label: 'Data Readiness' },
+    { key: 'integration',        label: 'Integration' },
+    { key: 'environment',        label: 'Environment' },
+  ];
+
+  tbody.innerHTML = rows.map(e => {
+    const pct = entryPct(e);
+    const pctClass = discPctClass(pct);
+    const daysClass = discDaysClass(e.days_open, e.status);
+    const slaTip = discSlaTip(e.days_open, e.status);
+    const title = getCardTitle(e.card_id);
+    const isSelected = activeDiscoveryCardId === e.card_id;
+    const statusColors = { 'Complete':'var(--green)', 'In Progress':'var(--blue)', 'Blocked':'var(--red)' };
+    const sc = statusColors[e.status] || 'var(--text-dim)';
+
+    const catCells = catFields.map(f => {
+      const v = e[f.key] || 0;
+      const barColor = discScoreColor(v);
+      return `<td>
+        <div class="score-bar-wrap">
+          <div class="score-bar"><div class="score-bar-fill" style="width:${v*20}%;background:${barColor}"></div></div>
+          <span class="score-val">${v}/5</span>
+        </div>
+      </td>`;
+    }).join('');
+
+    return `<tr class="disc-row${isSelected ? ' selected' : ''}" onclick="toggleDiscoveryDetail(${e.card_id})">
+      <td>
+        <div style="font-weight:500;color:var(--text);font-size:0.78rem;line-height:1.3">${title}</div>
+        ${e.project !== 'Internal' ? `<div style="font-size:0.65rem;color:var(--text-dim);margin-top:2px">${e.project}</div>` : ''}
+      </td>
+      <td style="font-size:0.72rem;white-space:nowrap">${e.owner}</td>
+      <td><span class="status-badge" style="background:${sc}18;color:${sc};border:1px solid ${sc}33">${e.status}</span></td>
+      ${catCells}
+      <td><span class="disc-pct-badge ${pctClass}">${pct}%</span></td>
+      <td>
+        <span class="days-badge ${daysClass}">${e.days_open}d</span>
+        ${slaTip ? `<span class="days-sla">${slaTip}</span>` : ''}
+      </td>
+      <td>${discBlockerHtml(e.blocker)}</td>
+      <td style="font-size:0.7rem;color:var(--text-dim);max-width:200px">${e.notes || '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleDiscoveryDetail(cardId) {
+  if (activeDiscoveryCardId === cardId) {
+    closeDiscoveryDetail();
+    return;
+  }
+  activeDiscoveryCardId = cardId;
+  renderDiscoveryRegister(); // update selected row highlight
+  openDiscoveryDetail(cardId);
+}
+
+function closeDiscoveryDetail() {
+  activeDiscoveryCardId = null;
+  document.getElementById('disc-detail-panel').style.display = 'none';
+  renderDiscoveryRegister();
+}
+
+function openDiscoveryDetail(cardId) {
+  const entry = discoveryLog.find(e => e.card_id === cardId);
+  if (!entry) return;
+
+  const panel = document.getElementById('disc-detail-panel');
+  const title = getCardTitle(cardId);
+
+  // Header
+  document.getElementById('disc-detail-title').textContent = title;
+  document.getElementById('disc-detail-meta').innerHTML =
+    `Owner: ${entry.owner} &nbsp;·&nbsp; Project: ${entry.project} &nbsp;·&nbsp; Opened: ${entry.date_opened} &nbsp;·&nbsp; ${entry.days_open}d open`;
+
+  // Checklists — reorder per DISC_CAT_ORDER
+  const catMap = { 'Stakeholders & Scope': entry.stakeholders_scope, 'Data Readiness': entry.data_readiness, 'Integration': entry.integration, 'Environment': entry.environment };
+  const orderedSections = DISC_CAT_ORDER.map(name => discoveryData.find(s => s.category === name)).filter(Boolean);
+
+  const checksDiv = document.getElementById('disc-detail-checklists');
+  checksDiv.innerHTML = orderedSections.map(section => {
+    const score = catMap[section.category] || 0;
+    const itemsDone = Math.round((score / 5) * section.items.length);
+    const barColor = discScoreColor(score);
+    return `
+      <div class="discovery-section">
+        <div class="discovery-section-header">
+          <span class="discovery-icon">${section.icon}</span>
+          <h3>${section.category}</h3>
+          <span style="margin-left:auto;font-family:var(--font-mono);font-size:0.65rem;color:${barColor}">${score}/5</span>
+        </div>
+        ${section.items.map((item, i) => {
+          const checked = i < itemsDone;
+          return `<div class="discovery-item ${checked ? 'checked' : ''}" onclick="toggleDiscItem(${cardId}, '${section.category}', ${i}, this)">
             <div class="discovery-checkbox"></div>
             <span class="discovery-text">${item}</span>
-          </div>
-        `;
-      }).join('')}
-    </div>
-  `).join('');
+          </div>`;
+        }).join('')}
+      </div>`;
+  }).join('');
 
-  const sidebar = document.getElementById('discovery-sidebar');
-  const total = discoveryData.reduce((a, s) => a + s.items.length, 0);
-  const done = Object.values(checkedItems).filter(Boolean).length;
-  const pct = Math.round((done / total) * 100);
+  // Sidebar — RAID assumptions for this project + SLA info
+  const projectRaid = raidLogData.filter(e =>
+    e.type === 'A' && (
+      e.project === entry.project ||
+      (e.id && e.id.startsWith('C-' + cardId))
+    )
+  );
 
+  const pct = entryPct(entry);
+  const ringColor = discScoreColor(pct / 20);
+  const circumference = 2 * Math.PI * 40;
+
+  const sidebar = document.getElementById('disc-detail-sidebar');
   sidebar.innerHTML = `
-    <div class="sidebar-card">
+    <div class="sidebar-card" style="margin-bottom:14px">
       <h3>Discovery Progress</h3>
       <div class="progress-ring-wrap">
-        <svg width="100" height="100" viewBox="0 0 100 100">
+        <svg width="90" height="90" viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
-          <circle cx="50" cy="50" r="40" fill="none" stroke="#00d4ff" stroke-width="8"
-            stroke-dasharray="${2 * Math.PI * 40}"
-            stroke-dashoffset="${2 * Math.PI * 40 * (1 - pct / 100)}"
-            stroke-linecap="round"
-            transform="rotate(-90 50 50)"
-            style="transition: stroke-dashoffset 0.4s ease"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="${ringColor}" stroke-width="8"
+            stroke-dasharray="${circumference}"
+            stroke-dashoffset="${circumference * (1 - pct/100)}"
+            stroke-linecap="round" transform="rotate(-90 50 50)"
+            style="transition:stroke-dashoffset 0.4s ease"/>
         </svg>
-        <div class="progress-ring-label" style="margin-top:-6px">${pct}%</div>
-        <div class="progress-ring-sub">${done} of ${total} items<br>validated</div>
+        <div class="progress-ring-label" style="margin-top:-6px;font-size:1.4rem">${pct}%</div>
+        <div class="progress-ring-sub">${entry.status}</div>
       </div>
+      ${entry.blocker ? `<div style="margin-top:12px;padding:8px;background:rgba(233,69,96,0.07);border:1px solid rgba(233,69,96,0.2);border-radius:6px;font-size:0.73rem;color:var(--red)">${entry.blocker}</div>` : ''}
     </div>
-    <div class="sidebar-card">
-      <h3>Assumption Log</h3>
-      ${ASSUMPTIONS.map(a => `
+    <div class="sidebar-card" style="margin-bottom:14px">
+      <h3>Assumptions (${projectRaid.length})</h3>
+      ${projectRaid.length ? projectRaid.map(a => `
         <div class="assumption-entry">
-          <div class="assumption-text">${a.text}</div>
-          <span class="assumption-status status-${a.status}">${a.status}</span>
-        </div>
-      `).join('')}
-      <p style="font-size:0.72rem;color:var(--text-dim);margin-top:12px;line-height:1.5">Each assumption marked <span style="color:var(--red)">false</span> triggers a scope review and RAID log entry.</p>
+          <div class="assumption-text">${a.description}</div>
+          <span class="assumption-status status-${(a.status||'unvalidated').toLowerCase().replace(/\s/g,'')}">${a.status || 'unvalidated'}</span>
+        </div>`).join('') :
+        '<p style="font-size:0.75rem;color:var(--text-dim)">No assumptions logged in RAID register for this project.</p>'
+      }
     </div>
     <div class="sidebar-card">
       <h3>Open Question SLA</h3>
-      <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6">Any open discovery item unresolved for <strong style="color:var(--orange)">3+ business days</strong> is escalated to TPM and flagged as a Risk in the RAID log. Items aging beyond <strong style="color:var(--red)">7 days</strong> require executive visibility.</p>
+      <p style="font-size:0.78rem;color:var(--text-muted);line-height:1.6">
+        <strong style="color:var(--orange)">3+ days</strong> unresolved → escalate to TPM, flag as Risk in RAID.<br>
+        <strong style="color:var(--red)">7+ days</strong> → executive visibility required.
+        ${entry.days_open >= 7 && entry.status !== 'Complete'
+          ? '<br><br><strong style="color:var(--red)">⚠ This entry has exceeded the 7-day threshold.</strong>'
+          : entry.days_open >= 3 && entry.status !== 'Complete'
+          ? '<br><br><strong style="color:var(--orange)">↑ This entry has exceeded the 3-day threshold.</strong>'
+          : ''
+        }
+      </p>
     </div>
   `;
+
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleDiscItem(cardId, category, index, el) {
+  const key = `${cardId}-${category}-${index}`;
+  checkedItems[key] = !checkedItems[key];
+  el.classList.toggle('checked', checkedItems[key]);
 }
 
 function toggleCheck(key, el) {
   checkedItems[key] = !checkedItems[key];
   el.classList.toggle('checked', checkedItems[key]);
-  renderDiscovery();
+  // Refresh subtitle count
+  const totalItems = discoveryData.reduce((a, s) => a + s.items.length, 0);
+  const doneItems  = Object.values(checkedItems).filter(Boolean).length;
+  const sub = document.getElementById('disc-ref-subtitle');
+  if (sub) sub.textContent = doneItems > 0 ? `— ${doneItems} of ${totalItems} items checked` : '';
 }
 
 // ── WORKSTREAMS ──────────────────────────────────────────────────────────────
 
 const RACI_MATRIX = [
-  { activity: "SOW Translation to Kanban", tpm: "A", eng: "C", data: "C", launch: "I", cs: "I" },
-  { activity: "Data Schema Discovery", tpm: "R", eng: "C", data: "A", launch: "I", cs: "I" },
-  { activity: "API Integration Design", tpm: "R", eng: "A", data: "C", launch: "I", cs: "I" },
-  { activity: "Acceptance Criteria Sign-off", tpm: "A", eng: "R", data: "C", launch: "C", cs: "R" },
-  { activity: "UAT Coordination", tpm: "A", eng: "C", data: "I", launch: "R", cs: "C" },
-  { activity: "Data–Eng Handoff", tpm: "A", eng: "R", data: "R", launch: "I", cs: "I" },
-  { activity: "Go-Live Readiness Gate", tpm: "A", eng: "R", data: "C", launch: "R", cs: "C" },
-  { activity: "CS Handoff & Onboarding", tpm: "C", eng: "I", data: "I", launch: "R", cs: "A" },
+  // A = single Accountable owner (answers for outcome). R = Responsible (does the work). C = Consulted. I = Informed.
+  { activity: "SOW Translation to Kanban",  tpm: "A",  eng: "C",  data: "C",  launch: "I",  cs: "I"  },
+  { activity: "Data Schema Discovery",      tpm: "A",  eng: "C",  data: "R",  launch: "I",  cs: "I"  },
+  { activity: "API Integration Design",     tpm: "C",  eng: "A",  data: "C",  launch: "I",  cs: "I"  },
+  { activity: "Acceptance Criteria Sign-off", tpm: "A", eng: "R", data: "C",  launch: "C",  cs: "C"  },
+  { activity: "UAT Coordination",           tpm: "A",  eng: "C",  data: "I",  launch: "R",  cs: "C"  },
+  { activity: "Data–Eng Handoff",           tpm: "A",  eng: "R",  data: "C",  launch: "I",  cs: "I"  },
+  { activity: "Go-Live Readiness Gate",     tpm: "C",  eng: "R",  data: "C",  launch: "A",  cs: "C"  },
+  { activity: "CS Handoff & Onboarding",    tpm: "C",  eng: "I",  data: "I",  launch: "R",  cs: "A"  },
 ];
 
 function renderWorkstreams() {
@@ -1952,32 +2773,118 @@ function renderWorkstreams() {
     </div>
   `).join('');
 
+  // Tooltips for cells
+  const tooltips = {
+    A: 'Accountable — single owner, answers for the outcome',
+    R: 'Responsible — executes the work',
+    C: 'Consulted — must be asked before decision is finalised',
+    I: 'Informed — notified after the decision',
+  };
+
+  // Validate: flag any row with 0 or 2+ A entries; render table
   const table = document.getElementById('raci-table');
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th>Activity / Decision</th>
-        <th>TPM</th>
-        <th>Engineering</th>
-        <th>Data Science</th>
-        <th>Launch</th>
-        <th>Customer Success</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${RACI_MATRIX.map(row => `
-        <tr>
-          <td style="color:var(--text);font-weight:500">${row.activity}</td>
-          ${[row.tpm, row.eng, row.data, row.launch, row.cs].map(r => `
-            <td><span class="raci-cell raci-${r}">${r}</span></td>
-          `).join('')}
-        </tr>
-      `).join('')}
-    </tbody>
-  `;
+  const thead = table.createTHead();
+  const hrow = thead.insertRow();
+  ['Activity / Decision','TPM','Engineering','Data Science','Launch','Customer Success'].forEach(h => {
+    const th = document.createElement('th');
+    th.textContent = h;
+    hrow.appendChild(th);
+  });
+  const tbody = table.createTBody();
+  RACI_MATRIX.forEach(row => {
+    const cells = [row.tpm, row.eng, row.data, row.launch, row.cs];
+    const aCount = cells.filter(c => c === 'A').length;
+    const tr = tbody.insertRow();
+    if (aCount !== 1) tr.style.outline = '1px solid rgba(233,69,96,0.4)';
+    const actTd = tr.insertCell();
+    actTd.style.cssText = 'color:var(--text);font-weight:500';
+    actTd.textContent = row.activity;
+    if (aCount !== 1) {
+      const warn = document.createElement('span');
+      warn.style.cssText = 'color:var(--red);font-size:0.65rem;margin-left:4px';
+      warn.textContent = '⚠';
+      warn.title = 'RACI rule violation: exactly one A required per activity';
+      actTd.appendChild(warn);
+    }
+    cells.forEach(r => {
+      const td = tr.insertCell();
+      td.title = tooltips[r] || r;
+      const span = document.createElement('span');
+      span.className = 'raci-cell raci-' + r;
+      span.textContent = r;
+      td.appendChild(span);
+    });
+  });
 }
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
+
+function goToKanbanProject(project) {
+  // Switch to Kanban view
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-kanban').classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => {
+    if (b.textContent === 'Kanban Board') b.classList.add('active');
+  });
+
+  // Find all cards belonging to this project
+  const matchingIds = new Set(
+    kanbanData.cards
+      .filter(c => {
+        let p = 'Internal';
+        for (const sep of [' — ', ' - ']) {
+          if (c.title.includes(sep)) { p = c.title.split(sep).pop().trim(); break; }
+        }
+        return p === project;
+      })
+      .map(c => c.id)
+  );
+
+  if (!matchingIds.size) return;
+
+  // Highlight matching cards, dim others
+  document.querySelectorAll('.kanban-card').forEach(el => {
+    const cardId = parseInt(el.id.replace('card-el-', ''));
+    if (matchingIds.has(cardId)) {
+      el.classList.add('project-highlight');
+      el.classList.remove('project-dim');
+    } else {
+      el.classList.add('project-dim');
+      el.classList.remove('project-highlight');
+    }
+  });
+
+  // Show banner above board
+  showKanbanProjectBanner(project, matchingIds.size);
+}
+
+function showKanbanProjectBanner(project, count) {
+  const existing = document.getElementById('kanban-project-banner');
+  if (existing) existing.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'kanban-project-banner';
+  banner.className = 'kanban-project-banner';
+  banner.innerHTML = `
+    <span class="kpb-icon">📌</span>
+    <span class="kpb-text">Highlighting <strong>${count} card${count === 1 ? '' : 's'}</strong> for project: <strong>${project}</strong></span>
+    <button class="kpb-clear" onclick="clearKanbanProjectFilter()">✕ Clear highlight</button>
+  `;
+  const board = document.getElementById('kanban-board');
+  board.parentNode.insertBefore(banner, board);
+
+  // Scroll board into view
+  banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function clearKanbanProjectFilter() {
+  document.querySelectorAll('.kanban-card').forEach(el => {
+    el.classList.remove('project-highlight', 'project-dim');
+  });
+  const banner = document.getElementById('kanban-project-banner');
+  if (banner) banner.remove();
+}
 
 function goToRaidLog(cardId, project) {
   // Collect matching entries: card-derived (C-{id}*) + standalone log entries for this project

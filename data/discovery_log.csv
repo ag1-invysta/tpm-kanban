@@ -1,0 +1,25 @@
+card_id,project,owner,date_opened,status,stakeholders_scope,data_readiness,integration,environment,notes,days_open,blocker
+1,Acme Corp,TPM,2026-02-25,In Progress,5,4,3,4,OAuth2 token rotation still unresolved; schema doc requested,3,A:Token rotation cadence unconfirmed
+3,FinServ Co,Data Science,2026-02-26,Blocked,3,2,1,2,Firewall ticket open 4 days — API validation cannot proceed,2,I:Firewall blocking API access validation
+5,Internal,Engineering,2026-02-20,Complete,5,5,5,5,All dependencies cleared; acceptance criteria locked,8,
+6,MediCore,CS,2026-02-10,Complete,5,5,5,5,Full discovery complete; onboarded and live,18,
+7,LogiTrack,Data Science,2026-02-27,In Progress,4,3,4,3,Source schema confirmed stable; credential provisioning pending,1,
+9,Internal,Engineering,2026-02-22,Complete,5,5,5,5,Test coverage confirmed; rollback strategy validated,6,
+10,Internal,TPM,2026-02-21,In Progress,5,4,4,3,SOC 2 control owner gaps blocking evidence collection,7,I:3 control areas pending owner response
+11,NovaTech,Data Science,2026-02-26,Blocked,4,2,3,3,Encoding anomalies found in 2 source files — sweep in progress,2,A:Encoding assumption unverified
+12,Internal,Engineering,2026-02-01,Complete,5,5,5,5,Retail pilot shipped; all discovery items cleared,27,
+13,Internal,Engineering,2026-02-27,In Progress,3,4,4,3,Rate limit policy drafted; client volume assumptions need validation,1,
+14,Internal,Engineering,2026-02-24,In Progress,5,5,4,4,Schema validation dependency sequenced; Looker connector assumed available,4,D:Dependent on Schema Validation Framework
+15,Internal,Data Science,2026-02-26,Complete,5,5,5,5,Alert thresholds agreed; pipeline stable in staging,2,
+16,BankFirst,Engineering,2026-02-22,Blocked,4,4,2,4,IdP cert expiry discovered — renewal ticket raised; SSO blocked,6,I:IdP cert expires in 11 days
+17,Internal,TPM,2026-02-20,Complete,5,5,5,5,Q1 retro complete; discovery checklist updated with 3 new items,8,
+18,Internal,CS,2026-02-26,In Progress,4,4,5,5,Template backward-compatibility assumption needs final validation,2,
+19,Internal,Engineering,2026-02-25,In Progress,5,5,5,4,Load test scripts complete; prod environment parity assumption active,3,
+20,Internal,Data Science,2026-02-25,Blocked,3,2,3,3,Legal review delayed; PII field list completeness unverified,3,R:Legal review may impact go-live
+21,Internal,Engineering,2026-02-27,Complete,5,5,5,5,Event schema finalized; endpoint payload acceptance confirmed,1,
+24,Internal,Engineering,2026-01-28,Complete,5,5,5,5,Weekly accuracy reports validated end-to-end,31,
+25,Internal,TPM,2026-02-25,In Progress,5,5,5,4,Failure scenarios documented; runbook peer review in progress,3,
+26,Internal,Engineering,2026-02-21,Blocked,4,4,4,3,Multi-tenant caching edge case found — isolation not guaranteed,7,I:Caching edge case blocking audit sign-off
+27,EduPath,TPM,2026-02-28,In Progress,2,1,1,1,Discovery kickoff scheduled Day 3; pre-checklist started,0,
+28,Internal,Engineering,2026-02-10,Complete,5,5,5,5,Monitoring v2 deployed with PagerDuty integration; all alerts active,18,
+4,Internal,Launch,2026-02-26,In Progress,5,5,5,4,UAT scripts signed off; staging parity assumption active,2,

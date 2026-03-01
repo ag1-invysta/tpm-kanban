@@ -42,6 +42,25 @@ def load_raid_log():
     return entries
 
 
+def load_discovery_log():
+    """Load per-project discovery checklist progress from CSV."""
+    entries = []
+    csv_path = os.path.join(os.path.dirname(__file__), 'data', 'discovery_log.csv')
+    with open(csv_path, newline='', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            entry = dict(row)
+            # Cast numeric scores to int
+            for field in ('card_id', 'days_open', 'stakeholders_scope',
+                          'data_readiness', 'integration', 'environment'):
+                try:
+                    entry[field] = int(entry[field])
+                except (ValueError, KeyError):
+                    pass
+            entries.append(entry)
+    return entries
+
+
 def build_raid_log():
     """Merge card-derived RAID flags with standalone log entries."""
     card_raids = []
@@ -173,6 +192,7 @@ def index():
         "discovery":   DISCOVERY_CHECKLIST,
         "workstreams": WORKSTREAM_RACI,
         "raid_log":    build_raid_log(),
+        "discovery_log": load_discovery_log(),
     })
     return render_template("index.html", inline_data=inline_data)
 
@@ -195,6 +215,11 @@ def get_workstreams():
 @app.route("/api/raid_log")
 def get_raid_log():
     return jsonify(build_raid_log())
+
+
+@app.route("/api/discovery_log")
+def get_discovery_log():
+    return jsonify(load_discovery_log())
 
 
 # ── Entry Point ───────────────────────────────────────────────────────────────
