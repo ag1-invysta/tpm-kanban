@@ -1,0 +1,36 @@
+id,deliverable_id,title,owner,workstream,rom_days,confidence,status,predecessors,successors,raid_ref,notes
+T-01,D-01,Source system API inventory & schema mapping,Data Science,Data,2,Medium,Complete,,T-02,D-01:A,Schema doc received; 3 sources confirmed
+T-02,D-01,Data quality baseline assessment,Data Science,Data,2,Low,In Progress,T-01,T-03 T-04,D-01:R,Encoding anomaly found in source 2 — spike created
+T-03,D-01,Spike — encoding validation & format normalization,Data Science,Data,2,Medium,In Progress,T-02,T-04,,Spike timebox 2d; resolves T-02 sizing uncertainty
+T-04,D-01,Ingestion pipeline build,Engineering,Platform/Dev,5,Medium,Not Started,T-02 T-03,T-05,,Blocked until spike completes
+T-05,D-01,Transformation layer & field mapping,Engineering,Platform/Dev,3,High,Not Started,T-04,,,Depends on finalized schema from T-04
+T-06,D-02,Token rotation mechanism — design,Engineering,Platform/Dev,1,Low,Not Started,,T-07,D-02:A,Cannot size until cadence assumption resolved
+T-07,D-02,Token rotation — implementation,Engineering,Platform/Dev,3,Low,Not Started,T-06,T-08,,ROM ±50% pending assumption validation
+T-08,D-02,Integration test — OAuth2 end-to-end,Engineering,Platform/Dev,1,Medium,Not Started,T-07,,,
+T-09,D-03,KPI schema & metric definitions,Data Science,Data,1,High,Complete,,T-10,,Signed off by Acme sponsor
+T-10,D-03,Dashboard layout & component build,Engineering,Platform/Dev,4,High,In Progress,T-09,T-11,,On track
+T-11,D-03,UAT — dashboard sign-off,Launch,Launch,2,High,Not Started,T-10,,,AC written; UAT scripts ready
+T-12,D-04,IdP vendor contact & cert renewal initiation,Engineering,Platform/Dev,1,Low,In Progress,,T-13,D-04:I,Ticket raised with BankFirst IT
+T-13,D-04,SSO configuration — SP & IdP metadata exchange,Engineering,Platform/Dev,2,Low,Not Started,T-12,T-14,,Blocked until cert renewed
+T-14,D-04,SSO integration test — login flow,Engineering,Platform/Dev,1,Medium,Not Started,T-13,T-15,,
+T-15,D-04,RBAC provisioning — role mapping,Engineering,Platform/Dev,1,High,Not Started,T-14,,,
+T-16,D-05,RBAC matrix design — roles × permissions,Engineering,Platform/Dev,1,High,Complete,,T-17,,Approved by BankFirst security lead
+T-17,D-05,RBAC implementation,Engineering,Platform/Dev,2,High,In Progress,T-16,T-18,,On track
+T-18,D-05,RBAC acceptance test,Launch,Launch,1,High,Not Started,T-17,,,
+T-19,D-06,Spike — source encoding format validation,Data Science,Data,2,Medium,In Progress,,T-20,,2d timebox; day 1 complete
+T-20,D-06,Data import pipeline build,Data Science,Data,5,Medium,Not Started,T-19,T-21,,Size TBD pending spike result
+T-21,D-06,Import validation & error handling,Data Science,Data,2,High,Not Started,T-20,,,
+T-22,D-07,Validation rule definition — with NovaTech,Data Science,Data,2,High,Complete,,T-23,,Rules signed off
+T-23,D-07,Validation framework build,Data Science,Data,4,High,In Progress,T-22,T-24,,
+T-24,D-07,Framework UAT,Launch,Launch,1,High,Not Started,T-23,,,
+T-25,D-08,Firewall access request — FinServ IT,TPM,Stakeholders,1,Low,In Progress,,T-26,D-08:I,Ticket open 4 days; escalated to TPM
+T-26,D-08,API authentication design,Engineering,Platform/Dev,2,Low,Not Started,T-25,T-27,,Cannot start until firewall cleared
+T-27,D-08,Auth layer implementation,Engineering,Platform/Dev,2,Medium,Not Started,T-26,T-28,,
+T-28,D-08,Auth integration test,Engineering,Platform/Dev,1,High,Not Started,T-27,,,
+T-29,D-09,Spike — throughput & latency baseline,Engineering,Platform/Dev,2,Medium,Not Started,,T-30,,Spike recommended before sizing T-30
+T-30,D-09,Event streaming pipeline build,Engineering,Platform/Dev,5,Medium,Not Started,T-29,T-31,,
+T-31,D-09,Streaming acceptance test,Launch,Launch,2,High,Not Started,T-30,,,
+T-32,D-12,Stakeholder mapping & RACI draft,TPM,Stakeholders,1,High,Complete,,T-33,,Completed Day 1
+T-33,D-12,SOW deliverable decomposition workshop,TPM,Stakeholders,1,High,In Progress,T-32,T-34,,Day 2 — all workstreams attending
+T-34,D-12,Owner sizing pass — async,TPM,Stakeholders,1,High,Not Started,T-33,T-35,,Each owner sizes independently post-workshop
+T-35,D-12,Sizing review & RAID population,TPM,Stakeholders,1,High,Not Started,T-34,,,DoR gate review to follow

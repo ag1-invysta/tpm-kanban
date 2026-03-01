@@ -266,6 +266,50 @@
   .card-age.aging { color: var(--orange); }
   .card-age.critical { color: var(--red); }
 
+  /* WSJF score badge on intake cards */
+  .wsjf-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  .wsjf-score {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0,212,255,0.1);
+    color: var(--blue);
+    border: 1px solid rgba(0,212,255,0.25);
+    white-space: nowrap;
+  }
+  .wsjf-bar-wrap {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .wsjf-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--blue), #7c3aed);
+    transition: width 0.4s ease;
+  }
+  .wsjf-locked {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    margin-top: 3px;
+    padding: 3px 6px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
   /* Inline column detail panel */
   .col-detail-inline {
     display: none;
@@ -1378,6 +1422,342 @@
     align-content: start;
   }
 
+  /* ── SOW TRANSLATION VIEW ───────────────────────────────── */
+
+  /* Process pipeline */
+  .sow-pipeline {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    overflow: visible;
+    padding-bottom: 4px;
+    position: relative;
+  }
+  .sow-step {
+    flex: 1;
+    min-width: 130px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--step-color, var(--blue));
+    padding: 14px 14px 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .sow-step:not(:last-child) { border-right: none; }
+  .sow-step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  .sow-step:last-child  { border-radius: 0 var(--radius) var(--radius) 0; }
+  .sow-step:hover, .sow-step.active { background: var(--surface2); }
+  .sow-step-num {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    color: var(--step-color, var(--blue));
+    letter-spacing: 0.08em;
+    margin-bottom: 5px;
+  }
+  .sow-step-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .sow-step-sub {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+  .sow-step-arrow {
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background: var(--bg);
+    border: 1px solid var(--border-bright);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    z-index: 5;
+  }
+  .sow-step-detail { display: none; }  /* hidden inline; shown via overlay */
+
+  /* Floating overlay for pipeline step popovers — avoids overflow clipping */
+  #sow-step-overlay {
+    display: none;
+    position: fixed;
+    min-width: 280px;
+    max-width: 380px;
+    max-height: 75vh;
+    overflow-y: auto;
+    background: #1a2535;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    z-index: 9999;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    animation: slideDown 0.15s ease;
+  }
+  #sow-step-overlay.visible { display: block; }
+  .sow-step-detail-title {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--step-color, var(--blue));
+    margin-bottom: 8px;
+  }
+  .sow-step-detail ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .sow-step-detail li {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding-left: 12px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .sow-step-detail li::before { content: '→'; position: absolute; left: 0; color: var(--step-color, var(--blue)); font-size: 0.65rem; }
+  #sow-step-overlay li {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.65);
+    padding-left: 12px;
+    position: relative;
+    line-height: 1.4;
+  }
+  #sow-step-overlay li::before { content: '→'; position: absolute; left: 0; font-size: 0.65rem; color: rgba(255,255,255,0.35); }
+  .sow-step-output {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    font-size: 0.68rem;
+    color: var(--text-dim);
+  }
+  .sow-step-output strong { color: var(--text); }
+
+  /* Toolbar */
+  .sow-toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .sow-summary-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-left: auto;
+  }
+  .sow-chip {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    padding: 3px 9px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .sow-chip-blocked  { background: rgba(233,69,96,0.1);   color: var(--red);    border: 1px solid rgba(233,69,96,0.25); }
+  .sow-chip-spike    { background: rgba(245,166,35,0.1);  color: var(--orange); border: 1px solid rgba(245,166,35,0.2); }
+  .sow-chip-ready    { background: rgba(16,185,129,0.1);  color: var(--green);  border: 1px solid rgba(16,185,129,0.25); }
+  .sow-chip-progress { background: rgba(0,212,255,0.08);  color: var(--blue);   border: 1px solid rgba(0,212,255,0.2); }
+
+  /* Deliverables table */
+  .sow-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 20px;
+  }
+  .sow-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+  .sow-table thead { background: var(--surface2); position: sticky; top: 0; z-index: 10; }
+  .sow-table th {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-bright);
+    white-space: nowrap;
+  }
+  .sow-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    vertical-align: middle;
+    color: var(--text-muted);
+  }
+  .sow-table tr:last-child td { border-bottom: none; }
+  .sow-table tr.sow-row { cursor: pointer; transition: background 0.12s; }
+  .sow-table tr.sow-row:hover td { background: rgba(255,255,255,0.03); }
+  .sow-table tr.sow-row.selected td { background: rgba(0,212,255,0.05); }
+
+  /* Confidence badge */
+  .conf-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .conf-High   { background: rgba(16,185,129,0.1);  color: var(--green);  border: 1px solid rgba(16,185,129,0.25); }
+  .conf-Medium { background: rgba(245,166,35,0.1);  color: var(--orange); border: 1px solid rgba(245,166,35,0.2); }
+  .conf-Low    { background: rgba(233,69,96,0.1);   color: var(--red);    border: 1px solid rgba(233,69,96,0.25); }
+
+  /* DoR gate indicators */
+  .dor-gates { display: flex; gap: 4px; }
+  .dor-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    font-size: 0.55rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+  .dor-true  { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .dor-false { background: rgba(255,255,255,0.04); color: var(--text-dim); border: 1px solid rgba(255,255,255,0.08); }
+
+  /* Date at-risk */
+  .date-atrisk { color: var(--red); font-family: var(--font-mono); font-size: 0.65rem; }
+  .date-ok     { color: var(--text-dim); font-family: var(--font-mono); font-size: 0.65rem; }
+
+  /* Detail panel */
+  .sow-detail-panel {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    animation: slideDown 0.2s ease;
+  }
+  .sow-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sow-detail-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .sow-detail-meta  { font-size: 0.75rem; color: var(--text-muted); }
+  .sow-detail-body {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 20px;
+  }
+
+  /* Task list */
+  .sow-task-list { display: flex; flex-direction: column; gap: 8px; }
+  .sow-task-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--task-color, var(--blue));
+    border-radius: var(--radius);
+    padding: 12px 14px;
+  }
+  .sow-task-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .sow-task-id {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .sow-task-title {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text);
+    flex: 1;
+  }
+  .sow-task-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+  }
+  .sow-task-meta span { display: flex; align-items: center; gap: 4px; }
+  .sow-task-deps {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .sow-dep-tag {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border-bright);
+    color: var(--text-dim);
+  }
+  .sow-dep-tag.pred { border-color: rgba(245,166,35,0.3); color: var(--orange); background: rgba(245,166,35,0.05); }
+  .sow-dep-tag.succ { border-color: rgba(0,212,255,0.25); color: var(--blue);   background: rgba(0,212,255,0.05); }
+
+  /* Spike indicator */
+  .spike-badge {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(245,166,35,0.1);
+    color: var(--orange);
+    border: 1px solid rgba(245,166,35,0.25);
+    white-space: nowrap;
+  }
+
+  /* DoR Legend strip */
+  .sow-dor-legend {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 0;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+  .sow-dor-legend-title {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-dim);
+  }
+  .sow-dor-item { display: flex; align-items: center; gap: 5px; }
+  .sow-dor-note {
+    margin-left: auto;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
   /* ── WORKSTREAMS VIEW ────────────────────────────────────── */
   .workstream-flow {
     display: flex;
@@ -1601,6 +1981,7 @@
     <button onclick="switchView('raid', this)">RAID Log</button>
     <button onclick="switchView('discovery', this)">Discovery</button>
     <button onclick="switchView('workstreams', this)">Workstreams</button>
+    <button onclick="switchView('sow', this)">SOW Translation</button>
   </nav>
 </header>
 
@@ -1818,6 +2199,90 @@
     </div>
   </div>
 
+  <!-- ── SOW TRANSLATION VIEW ────────────────────────────────── -->
+  <div id="view-sow" class="view">
+    <div class="page-header">
+      <h1>SOW → <span>Kanban</span> Translation</h1>
+      <p>Translating a Statement of Work into a trustworthy delivery plan. Each deliverable is decomposed, sized, serialized, and gated through Definition of Ready before cards enter the Kanban board.</p>
+    </div>
+
+    <!-- Process pipeline -->
+    <div class="sow-pipeline" id="sow-pipeline"></div>
+    <!-- Fixed overlay popover for pipeline steps (avoids overflow clipping) -->
+    <div id="sow-step-overlay"></div>
+
+    <!-- Filters + summary -->
+    <div class="sow-toolbar">
+      <div class="filter-group">
+        <label class="filter-label">Project</label>
+        <select id="sow-filter-project" onchange="renderSowRegister()">
+          <option value="">All Projects</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Status</label>
+        <select id="sow-filter-status" onchange="renderSowRegister()">
+          <option value="">All</option>
+          <option value="In Decomposition">In Decomposition</option>
+          <option value="Spike In Progress">Spike In Progress</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Blocked">Blocked</option>
+          <option value="Ready for Execution">Ready for Execution</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Confidence</label>
+        <select id="sow-filter-confidence" onchange="renderSowRegister()">
+          <option value="">All</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+      <div class="sow-summary-chips" id="sow-summary-chips"></div>
+    </div>
+
+    <!-- Deliverables register -->
+    <div class="sow-table-wrap">
+      <table class="sow-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Project</th>
+            <th>Deliverable</th>
+            <th>Workstream</th>
+            <th>WSJF ▼</th>
+            <th>ROM</th>
+            <th>Confidence</th>
+            <th>Status</th>
+            <th>DoR</th>
+            <th>Committed</th>
+            <th>Target Date</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="sow-table-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Task breakdown panel -->
+    <div class="sow-detail-panel" id="sow-detail-panel" style="display:none">
+      <div class="sow-detail-header">
+        <div>
+          <div class="sow-detail-title" id="sow-detail-title"></div>
+          <div class="sow-detail-meta" id="sow-detail-meta"></div>
+        </div>
+        <button class="disc-detail-close" onclick="closeSowDetail()">✕</button>
+      </div>
+      <div class="sow-detail-body">
+        <div class="sow-task-list" id="sow-task-list"></div>
+        <div class="sow-detail-sidebar" id="sow-detail-sidebar"></div>
+      </div>
+    </div>
+
+
+  </div>
+
   <!-- ── WORKSTREAMS VIEW ───────────────────────────────────────── -->
   <div id="view-workstreams" class="view">
     <div class="page-header">
@@ -1873,6 +2338,9 @@ let activeColId = null;
 let checkedItems = {};
 let discoveryLog = [];
 let activeDiscoveryCardId = null;
+let sowDeliverables = [];
+let sowTasks = [];
+let activeSowDeliverable = null;
 
 const WS_COLORS = ['#00d4ff', '#7c3aed', '#10b981', '#f59e0b'];
 // ── RAID FLOW (corrected — maps each type to where it enters the 7-column flow)
@@ -2132,6 +2600,8 @@ function loadAll() {
     raidData     = INLINE_DATA.raid;
     discoveryData = INLINE_DATA.discovery;
   discoveryLog = INLINE_DATA.discovery_log || [];
+  sowDeliverables = INLINE_DATA.sow_deliverables || [];
+  sowTasks = INLINE_DATA.sow_tasks || [];
     workstreamData = INLINE_DATA.workstreams;
     raidLogData  = INLINE_DATA.raid_log;
     filteredRaidData = [...raidLogData];
@@ -2140,6 +2610,7 @@ function loadAll() {
     populateFilterOptions();
     applyFilters();
     renderDiscovery();
+    renderSow();
     renderWorkstreams();
   } else {
     // Fallback: fetch from API (when Flask serves without template injection)
@@ -2218,13 +2689,22 @@ function renderKanban() {
     cardPanel.id = 'card-detail-' + col.id;
     colEl.appendChild(cardPanel);
 
+    // Sort intake cards by WSJF score descending
+    const displayCards = col.id === 'intake'
+      ? [...cards].sort((a, b) => b.wsjf_score - a.wsjf_score)
+      : cards;
+
+    // Compute max WSJF in intake for bar scaling
+    const maxWsjf = col.id === 'intake'
+      ? Math.max(...kanbanData.cards.filter(c => c.column === 'intake').map(c => c.wsjf_score), 1)
+      : 1;
+
     // Cards
-    cards.forEach(card => {
+    displayCards.forEach((card, rank) => {
       const cardEl = document.createElement('div');
       const isDone = col.id === 'done';
       const ageClass = isDone ? '' : (card.age_days > 5 ? 'critical' : card.age_days > 2 ? 'aging' : '');
       const ageLabel = card.age_days === 0 ? 'new' : `${card.age_days}d`;
-      // Show RAID badge if card has inline flags OR standalone log entries for its project
       let cardProject = 'Internal';
       for (const sep of [' — ', ' - ']) {
         if (card.title.includes(sep)) { cardProject = card.title.split(sep).pop().trim(); break; }
@@ -2232,10 +2712,22 @@ function renderKanban() {
       const hasRaid = card.raid_flags ||
         raidLogData.some(e => e.source === 'log' && e.project === cardProject);
       const raidBadge = hasRaid ? `<span class="tag tag-raid">⚑ RAID</span>` : '';
+
+      // WSJF badge — intake only
+      const isBlocked = card.dependencies && card.dependencies.toLowerCase() !== 'none' && card.dependencies.trim() !== '';
+      const wsjfHtml = col.id === 'intake' ? `
+        <div class="wsjf-badge">
+          <span class="wsjf-score" title="WSJF = (BV ${card.business_value} + 2×TC ${card.time_criticality} + RR ${card.risk_reduction}) ÷ ${card.rom_days}d ROM">#${rank+1} · ${card.wsjf_score}</span>
+          <div class="wsjf-bar-wrap"><div class="wsjf-bar-fill" style="width:${Math.round((card.wsjf_score/maxWsjf)*100)}%"></div></div>
+        </div>
+        ${isBlocked ? `<div class="wsjf-locked">🔒 Gated — ${card.dependencies}</div>` : ''}
+      ` : '';
+
       cardEl.className = 'kanban-card';
       cardEl.id = 'card-el-' + card.id;
       cardEl.style.setProperty('--card-accent', col.accent);
       cardEl.innerHTML = `
+        ${wsjfHtml}
         <div class="card-title">${card.title}</div>
         <div class="card-tags">
           <span class="tag tag-type">${card.type}</span>
@@ -2746,6 +3238,457 @@ function toggleCheck(key, el) {
   const doneItems  = Object.values(checkedItems).filter(Boolean).length;
   const sub = document.getElementById('disc-ref-subtitle');
   if (sub) sub.textContent = doneItems > 0 ? `— ${doneItems} of ${totalItems} items checked` : '';
+}
+
+// ── SOW TRANSLATION ──────────────────────────────────────────────────────────
+
+const SOW_PIPELINE_STEPS = [
+  {
+    num: '01', title: 'SOW Intake', color: '#e94560',
+    sub: 'Contract arrives',
+    detail: ['Receive signed SOW', 'Identify all deliverables by section', 'Flag committed dates and milestones', 'Log initial assumptions and risks in RAID'],
+    output: 'Deliverable inventory + initial RAID entries'
+  },
+  {
+    num: '02', title: 'Decomposition', color: '#f5a623',
+    sub: 'Break down deliverables',
+    detail: ['Workshop with x-functional team', 'Decompose each deliverable to atomic tasks', 'No estimates in this meeting — decompose only', 'Flag tasks needing a spike before sizing'],
+    output: 'Task list per deliverable, spike cards created'
+  },
+  {
+    num: '03', title: 'Owner Sizing', color: '#00d4ff',
+    sub: 'Async ROM per owner',
+    detail: ['Each owner sizes only their own tasks', 'Tag confidence: High / Medium / Low', 'Low confidence → auto-generates Assumption in RAID', 'No cross-team anchoring — independent estimates'],
+    output: 'ROM estimates with confidence tiers'
+  },
+  {
+    num: '04', title: 'Sizing Review', color: '#7c3aed',
+    sub: 'Consistency + RAID pass',
+    detail: ['Group review for consistency across owners', 'Surface disagreements — re-estimate if needed', 'Critical path check vs SOW committed dates', 'Date gaps → Risk entry in RAID immediately'],
+    output: 'Agreed ROM, critical path, RAID additions'
+  },
+  {
+    num: '05', title: 'Serialization', color: '#10b981',
+    sub: 'Sequence the work',
+    detail: ['Map predecessors and successors per task', 'Identify critical path explicitly', 'Cross-workstream dependencies flagged as RAID D entries', 'Confirm no circular dependencies'],
+    output: 'Dependency graph, sequenced task list'
+  },
+  {
+    num: '06', title: 'DoR Gate', color: '#f59e0b',
+    sub: 'Definition of Ready',
+    detail: ['AC written for every task', 'All dependencies identified and sequenced', 'Owner confirmed and available', 'ROM reviewed by owner (not top-down assigned)', 'RAID populated from decomposition sessions'],
+    output: 'DoR scorecard — all 5 gates must be green',
+    dorGates: [
+      { gate: 'AC Written',           items: ['Outcome clearly stated (not just a task title)', 'Acceptance criteria include both happy path and edge cases', 'Success metric is measurable and agreed with the customer'] },
+      { gate: 'Dependencies Mapped',   items: ['All predecessor tasks identified and sequenced', 'Cross-workstream handoffs explicit in task description', 'External dependencies (client IT, vendor) logged in RAID'] },
+      { gate: 'Owner Confirmed',       items: ['Named individual confirmed — not just a team or workstream', 'Owner has capacity in the delivery window', 'Owner has reviewed the task description and AC'] },
+      { gate: 'Sized by Owner',        items: ['ROM estimate provided by the owner who will do the work', 'Confidence tier assigned: High / Medium / Low', 'Low confidence → Assumption entry created in RAID'] },
+      { gate: 'RAID Populated',        items: ['All risks surfaced in decomposition logged', 'Assumptions requiring validation have entries', 'Cross-workstream dependencies tracked as D entries'] },
+    ]
+  },
+  {
+    num: '07', title: '→ Kanban', color: '#06b6d4',
+    sub: 'Cards land in Intake',
+    detail: [
+      'DoR-cleared cards land in Intake/Backlog — ranked by WSJF score',
+      'Team pulls from Intake into Ready for Analysis as capacity opens — never pushed',
+      'Fast-path exception: critical-path cards with committed date ≤ sprint end land directly in Ready for Analysis',
+      'High-risk assumptions and spike cards get dedicated Intake entries',
+      'RAID items linked bidirectionally to their delivery cards',
+    ],
+    output: 'Cards in Intake/Backlog, WSJF-ordered. Fast-path cards in Ready for Analysis.'
+  },
+];
+
+let activeSowStep = null;
+
+function renderSow() {
+  renderSowPipeline();
+
+  // Populate project filter
+  const projects = [...new Set(sowDeliverables.map(d => d.project))].sort();
+  const sel = document.getElementById('sow-filter-project');
+  if (sel && sel.options.length <= 1) {
+    projects.forEach(p => {
+      const o = document.createElement('option');
+      o.value = p; o.textContent = p; sel.appendChild(o);
+    });
+  }
+
+  renderSowSummary();
+  renderSowRegister();
+}
+
+function buildDorGatesHtml(step) {
+  if (!step.dorGates) return '';
+  var html = '<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1)">';
+  html += '<div style="font-family:var(--font-mono);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.08em;color:' + step.color + ';margin-bottom:10px">5 Required Gates — Full Checklist</div>';
+  step.dorGates.forEach(function(g) {
+    html += '<div style="margin-bottom:10px">';
+    html += '<div style="display:flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:600;color:#e2e8f0;margin-bottom:4px">';
+    html += '<span style="color:#10b981;font-size:0.7rem">&#10003;</span>';
+    html += '<span>' + g.gate + '</span></div>';
+    g.items.forEach(function(item) {
+      html += '<div style="display:flex;gap:7px;font-size:0.68rem;color:#94a3b8;padding:3px 0 3px 14px;line-height:1.35">';
+      html += '<span style="color:' + step.color + ';flex-shrink:0;margin-top:1px">&middot;</span>';
+      html += '<span>' + item + '</span></div>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderSowPipeline() {
+  const el = document.getElementById('sow-pipeline');
+  if (!el) return;
+  el.innerHTML = SOW_PIPELINE_STEPS.map(function(step, i) {
+    const isActive  = activeSowStep === i;
+    const isLast    = i === SOW_PIPELINE_STEPS.length - 1;
+    const hasDor    = !!step.dorGates;
+    const detailStyle = hasDor
+      ? 'min-width:340px;max-height:75vh;overflow-y:auto;'
+      : '';
+
+    const detailItems = step.detail.map(function(d) {
+      return '<li>' + d + '</li>';
+    }).join('');
+
+    const dorHtml   = buildDorGatesHtml(step);
+    const arrowHtml = isLast ? '' : '<div class="sow-step-arrow">&rarr;</div>';
+
+    return '<div class="sow-step' + (isActive ? ' active' : '') + '"'
+      + ' style="--step-color:' + step.color + '"'
+      + ' onclick="toggleSowStep(' + i + ', event)">'
+      + '<div class="sow-step-num">STEP ' + step.num + '</div>'
+      + '<div class="sow-step-title">' + step.title + '</div>'
+      + '<div class="sow-step-sub">' + step.sub + '</div>'
+      + arrowHtml
+      + '<div class="sow-step-detail" style="' + detailStyle + '">'
+      + '<div class="sow-step-detail-title">' + step.title + '</div>'
+      + '<ul>' + detailItems + '</ul>'
+      + dorHtml
+      + '<div class="sow-step-output"><strong>Output:</strong> ' + step.output + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function toggleSowStep(i, e) {
+  e.stopPropagation();
+  const overlay = document.getElementById('sow-step-overlay');
+  if (activeSowStep === i) {
+    activeSowStep = null;
+    overlay.classList.remove('visible');
+    renderSowPipeline();
+    return;
+  }
+  activeSowStep = i;
+  renderSowPipeline();
+
+  // Build content for the overlay
+  const step = SOW_PIPELINE_STEPS[i];
+  const detailItems = step.detail.map(function(d) {
+    return '<li>' + d + '</li>';
+  }).join('');
+  const dorHtml = buildDorGatesHtml(step);
+  overlay.innerHTML =
+    '<div style="font-family:var(--font-mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:' + step.color + ';margin-bottom:10px">STEP ' + step.num + ' — ' + step.title + '</div>'
+    + '<ul style="list-style:none;padding:0;margin:0 0 8px 0;display:flex;flex-direction:column;gap:5px">' + detailItems + '</ul>'
+    + dorHtml
+    + '<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);font-size:0.68rem;color:rgba(255,255,255,0.4)"><strong style="color:rgba(255,255,255,0.6)">Output:</strong> ' + step.output + '</div>';
+
+  // Position overlay below the clicked step tile
+  const stepEls = document.querySelectorAll('.sow-step');
+  if (stepEls[i]) {
+    const rect = stepEls[i].getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    let left = rect.left;
+    const overlayWidth = step.dorGates ? 380 : 280;
+    if (left + overlayWidth > viewportWidth - 16) {
+      left = viewportWidth - overlayWidth - 16;
+    }
+    overlay.style.top  = (rect.bottom + 8) + 'px';
+    overlay.style.left = left + 'px';
+    overlay.style.minWidth = (step.dorGates ? '360px' : '260px');
+  }
+  overlay.classList.add('visible');
+}
+
+// Close overlay when clicking outside
+document.addEventListener('click', function() {
+  if (activeSowStep !== null) {
+    activeSowStep = null;
+    const overlay = document.getElementById('sow-step-overlay');
+    if (overlay) overlay.classList.remove('visible');
+    renderSowPipeline();
+  }
+});
+
+function renderSowSummary() {
+  const chips = document.getElementById('sow-summary-chips');
+  if (!chips) return;
+  const blocked  = sowDeliverables.filter(d => d.status === 'Blocked').length;
+  const spike    = sowDeliverables.filter(d => d.spike_needed || d.status === 'Spike In Progress').length;
+  const ready    = sowDeliverables.filter(d => d.status === 'Ready for Execution').length;
+  const inprog   = sowDeliverables.filter(d => ['In Decomposition','In Progress'].includes(d.status)).length;
+  chips.innerHTML = `
+    ${blocked  ? `<span class="sow-chip sow-chip-blocked">⚠ ${blocked} Blocked</span>` : ''}
+    ${spike    ? `<span class="sow-chip sow-chip-spike">⚡ ${spike} Spike</span>` : ''}
+    <span class="sow-chip sow-chip-progress">● ${inprog} Active</span>
+    ${ready    ? `<span class="sow-chip sow-chip-ready">✓ ${ready} Ready</span>` : ''}
+  `;
+}
+
+function sowStatusColor(status) {
+  const map = {
+    'Blocked':             'var(--red)',
+    'Spike In Progress':   'var(--orange)',
+    'In Decomposition':    'var(--blue)',
+    'In Progress':         'var(--blue)',
+    'Ready for Execution': 'var(--green)',
+  };
+  return map[status] || 'var(--text-dim)';
+}
+
+function sowDateRisk(d) {
+  // Check if blocked/low-confidence deliverable is within 7 days of committed date
+  if (!d.committed_date || d.status === 'Ready for Execution') return false;
+  const diff = (new Date(d.committed_date) - new Date()) / 86400000;
+  return diff < 14 && (d.status === 'Blocked' || d.confidence === 'Low');
+}
+
+function dorGates(d) {
+  const gates = [
+    { key: 'dor_ac',    tip: 'Acceptance Criteria written' },
+    { key: 'dor_deps',  tip: 'Dependencies mapped' },
+    { key: 'dor_owner', tip: 'Owner confirmed' },
+    { key: 'dor_sized', tip: 'Sized by owner' },
+    { key: 'dor_raid',  tip: 'RAID populated' },
+  ];
+  return gates.map(g =>
+    `<span class="dor-dot dor-${d[g.key]}" title="${g.tip}">${d[g.key] ? '✓' : '·'}</span>`
+  ).join('');
+}
+
+function renderSowRegister() {
+  const project    = document.getElementById('sow-filter-project')?.value || '';
+  const status     = document.getElementById('sow-filter-status')?.value || '';
+  const confidence = document.getElementById('sow-filter-confidence')?.value || '';
+
+  let rows = sowDeliverables.filter(d => {
+    if (project    && d.project    !== project)    return false;
+    if (status     && d.status     !== status)     return false;
+    if (confidence && d.confidence !== confidence) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('sow-table-body');
+  if (!tbody) return;
+
+  const wsColors = {'Data':'#00d4ff','Platform/Dev':'#7c3aed','Launch':'#10b981','Customer Success':'#f59e0b','Stakeholders':'#e94560'};
+
+  // Sort by WSJF descending
+  // Compute WSJF scores locally for every row to avoid float property issues
+  const computeWsjf = d => {
+    const bv = Number(d.business_value)||0, tc = Number(d.time_criticality)||0,
+          rr = Number(d.risk_reduction)||0, rom = Number(d.rom_days)||1;
+    return Math.round((bv + 2*tc + rr) / rom * 100) / 100;
+  };
+  rows.sort((a, b) => computeWsjf(b) - computeWsjf(a));
+  const maxWsjfSow = Math.max(...sowDeliverables.map(x => computeWsjf(x)), 1);
+
+  tbody.innerHTML = rows.map((d, rank) => {
+    const sc      = sowStatusColor(d.status);
+    const atRisk  = sowDateRisk(d);
+    const tasks   = sowTasks.filter(t => t.deliverable_id === d.id);
+    const wsColor = wsColors[d.workstream] || 'var(--blue)';
+    const isSelected = activeSowDeliverable === d.id;
+    const wsjf    = computeWsjf(d);
+    const barW    = Math.round((wsjf / maxWsjfSow) * 100);
+    const scoreColor = wsjf >= 6 ? 'var(--green)' : wsjf >= 3 ? 'var(--blue)' : 'var(--text-dim)';
+    const dorComplete = d.dor_ac && d.dor_deps && d.dor_owner && d.dor_sized && d.dor_raid;
+    const daysToTarget = d.target_date ? Math.ceil((new Date(d.target_date) - new Date()) / 86400000) : 999;
+    const fastPath = dorComplete && daysToTarget <= 14 && d.status !== 'Ready for Execution';
+
+    return `<tr class="sow-row${isSelected ? ' selected' : ''}" onclick="toggleSowDetail('${d.id}')">
+      <td><span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-dim)">${d.id}</span></td>
+      <td style="font-size:0.72rem;white-space:nowrap">${d.project}</td>
+      <td>
+        <div style="font-weight:500;color:var(--text);font-size:0.78rem;line-height:1.3">${d.deliverable}</div>
+        <div style="font-size:0.65rem;color:var(--text-dim);margin-top:2px">§${d.section} · ${tasks.length} task${tasks.length !== 1 ? 's' : ''}</div>
+      </td>
+      <td><span style="font-size:0.7rem;color:${wsColor};font-weight:500">${d.workstream}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-family:var(--font-mono);font-size:0.72rem;font-weight:700;color:${scoreColor}">${wsjf}</span>
+          <div style="width:40px;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden">
+            <div style="height:100%;width:${barW}%;background:linear-gradient(90deg,var(--blue),#7c3aed);border-radius:2px"></div>
+          </div>
+        </div>
+        <div style="font-size:0.58rem;color:var(--text-dim);font-family:var(--font-mono);margin-top:2px">#${rank+1}</div>
+      </td>
+      <td style="font-family:var(--font-mono);font-size:0.7rem;white-space:nowrap">
+        ${d.rom_days}d
+        ${d.spike_needed ? '<br><span class="spike-badge">⚡ spike</span>' : ''}
+      </td>
+      <td><span class="conf-badge conf-${d.confidence}">${d.confidence}</span></td>
+      <td>
+        <span class="status-badge" style="background:${sc}18;color:${sc};border:1px solid ${sc}33">${d.status}</span>
+        ${fastPath ? '<div style="margin-top:4px;display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:0.55rem;color:#06b6d4;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.25);border-radius:3px;padding:2px 5px;white-space:nowrap">⚡ Fast-path → Ready for Analysis</div>' : ''}
+      </td>
+      <td><div class="dor-gates">${dorGates(d)}</div></td>
+      <td class="${atRisk ? 'date-atrisk' : 'date-ok'}" title="${atRisk ? '⚠ At risk vs committed date' : ''}">${d.committed_date}${atRisk ? ' ⚠' : ''}</td>
+      <td style="font-family:var(--font-mono);font-size:0.65rem;white-space:nowrap;${d.target_date > d.committed_date ? 'color:var(--red)' : 'color:var(--text-dim)'}">${d.target_date || d.committed_date}${d.target_date > d.committed_date ? ' ↑' : ''}</td>
+      <td style="font-size:0.7rem;color:var(--text-dim);max-width:160px;line-height:1.35">${d.notes || '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleSowDetail(id) {
+  if (activeSowDeliverable === id) { closeSowDetail(); return; }
+  activeSowDeliverable = id;
+  renderSowRegister();
+  openSowDetail(id);
+}
+
+function closeSowDetail() {
+  activeSowDeliverable = null;
+  document.getElementById('sow-detail-panel').style.display = 'none';
+  renderSowRegister();
+}
+
+function openSowDetail(id) {
+  const d = sowDeliverables.find(x => x.id === id);
+  if (!d) return;
+  const tasks = sowTasks.filter(t => t.deliverable_id === id);
+
+  document.getElementById('sow-detail-title').textContent = d.deliverable;
+  const detailDorComplete = d.dor_ac && d.dor_deps && d.dor_owner && d.dor_sized && d.dor_raid;
+  const detailDaysToTarget = d.target_date ? Math.ceil((new Date(d.target_date) - new Date()) / 86400000) : 999;
+  const detailFastPath = detailDorComplete && detailDaysToTarget <= 14 && d.status !== 'Ready for Execution';
+  document.getElementById('sow-detail-meta').innerHTML =
+    `${d.project} &nbsp;·&nbsp; §${d.section} &nbsp;·&nbsp; Owner: ${d.owner} &nbsp;·&nbsp; ${d.workstream} workstream &nbsp;·&nbsp; ROM: ${d.rom_days}d (${d.confidence} confidence) &nbsp;·&nbsp; Committed: ${d.committed_date}`
+    + (detailFastPath ? ' &nbsp;<span style="font-family:var(--font-mono);font-size:0.6rem;color:#06b6d4;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);border-radius:4px;padding:2px 7px">⚡ Fast-path → Ready for Analysis</span>' : '');
+
+  // Task list
+  const wsColors = {'Data':'#00d4ff','Platform/Dev':'#7c3aed','Launch':'#10b981','Stakeholders':'#e94560'};
+  const statusColors = {'Complete':'var(--green)','In Progress':'var(--blue)','Not Started':'var(--text-dim)','Blocked':'var(--red)'};
+  const taskList = document.getElementById('sow-task-list');
+
+  taskList.innerHTML = `
+    <div style="font-family:var(--font-mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);margin-bottom:8px">
+      Task Breakdown — ${tasks.length} tasks · ${tasks.reduce((a,t) => a + t.rom_days, 0)}d total ROM
+    </div>
+    ${tasks.map(t => {
+      const tc = wsColors[t.workstream] || 'var(--blue)';
+      const sc = statusColors[t.status] || 'var(--text-dim)';
+      const hasDeps = t.predecessors.length || t.successors.length;
+      return `<div class="sow-task-card" style="--task-color:${tc}">
+        <div class="sow-task-header">
+          <span class="sow-task-id">${t.id}</span>
+          <span class="sow-task-title">${t.title}</span>
+          ${t.raid_ref ? `<span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--orange)">${t.raid_ref}</span>` : ''}
+          ${t.title.toLowerCase().includes('spike') ? '<span class="spike-badge">⚡ spike</span>' : ''}
+        </div>
+        <div class="sow-task-meta">
+          <span style="color:${sc}">● ${t.status}</span>
+          <span>⏱ ${t.rom_days}d ROM</span>
+          <span class="conf-badge conf-${t.confidence}" style="font-size:0.58rem;padding:1px 5px">${t.confidence}</span>
+          <span style="color:${tc}">${t.workstream}</span>
+          <span>👤 ${t.owner}</span>
+        </div>
+        ${hasDeps ? `<div class="sow-task-deps">
+          ${t.predecessors.map(p => `<span class="sow-dep-tag pred" title="Predecessor: must complete before this task">← ${p}</span>`).join('')}
+          ${t.successors.map(s => `<span class="sow-dep-tag succ" title="Successor: gates this downstream task">${s} →</span>`).join('')}
+        </div>` : ''}
+        ${t.notes ? `<div style="font-size:0.68rem;color:var(--text-dim);margin-top:6px;line-height:1.4">${t.notes}</div>` : ''}
+      </div>`;
+    }).join('')}
+  `;
+
+  // Sidebar — DoR scorecard + RAID refs
+  const dorLabels = [
+    { key: 'dor_ac',    label: 'Acceptance Criteria written' },
+    { key: 'dor_deps',  label: 'Dependencies mapped' },
+    { key: 'dor_owner', label: 'Owner confirmed' },
+    { key: 'dor_sized', label: 'Sized by owner' },
+    { key: 'dor_raid',  label: 'RAID populated' },
+  ];
+  const dorPassed = dorLabels.filter(g => d[g.key]).length;
+  const raidEntries = raidLogData.filter(e =>
+    e.project === d.project || (d.notes && d.notes.includes(e.id))
+  ).slice(0, 6);
+
+  const sidebar = document.getElementById('sow-detail-sidebar');
+  // Recompute score locally — avoids any float serialization edge cases
+  const wsjfBV   = Number(d.business_value)   || 0;
+  const wsjfTC   = Number(d.time_criticality) || 0;
+  const wsjfRR   = Number(d.risk_reduction)   || 0;
+  const wsjfROM  = Number(d.rom_days)         || 1;
+  const wsjfCalc = Math.round((wsjfBV + 2 * wsjfTC + wsjfRR) / wsjfROM * 100) / 100;
+  const maxWsjfAll = Math.max(...sowDeliverables.map(x => Number(x.business_value || 0) + 2 * Number(x.time_criticality || 0) + Number(x.risk_reduction || 0)).map((v, i) => v / Math.max(1, Number(sowDeliverables[i].rom_days))), 1);
+  const wsjfBarW = Math.round((wsjfCalc / maxWsjfAll) * 100);
+  const wsjfColor = wsjfCalc >= 6 ? 'var(--green)' : wsjfCalc >= 3 ? 'var(--blue)' : 'var(--text-dim)';
+  sidebar.innerHTML = `
+    <div class="sidebar-card" style="margin-bottom:14px">
+      <h3>WSJF Score</h3>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-family:var(--font-mono);font-size:1.6rem;font-weight:700;color:${wsjfColor}">${wsjfCalc}</span>
+        <div style="flex:1;height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${wsjfBarW}%;background:linear-gradient(90deg,var(--blue),#7c3aed);border-radius:3px"></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+        <div style="background:rgba(255,255,255,0.03);border-radius:5px;padding:7px;text-align:center">
+          <div style="color:var(--text-dim);font-family:var(--font-mono);font-size:0.55rem;text-transform:uppercase;margin-bottom:3px">Biz Value</div>
+          <div style="color:var(--text);font-weight:700;font-family:var(--font-mono);font-size:1rem">${wsjfBV}</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border-radius:5px;padding:7px;text-align:center">
+          <div style="color:var(--text-dim);font-family:var(--font-mono);font-size:0.55rem;text-transform:uppercase;margin-bottom:3px">Time Crit ×2</div>
+          <div style="color:var(--orange);font-weight:700;font-family:var(--font-mono);font-size:1rem">${wsjfTC}</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border-radius:5px;padding:7px;text-align:center">
+          <div style="color:var(--text-dim);font-family:var(--font-mono);font-size:0.55rem;text-transform:uppercase;margin-bottom:3px">Risk Reduc</div>
+          <div style="color:var(--text);font-weight:700;font-family:var(--font-mono);font-size:1rem">${wsjfRR}</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border-radius:5px;padding:7px;text-align:center">
+          <div style="color:var(--text-dim);font-family:var(--font-mono);font-size:0.55rem;text-transform:uppercase;margin-bottom:3px">÷ ROM</div>
+          <div style="color:var(--text);font-weight:700;font-family:var(--font-mono);font-size:1rem">${d.rom_days}d</div>
+        </div>
+      </div>
+      <div style="font-size:0.62rem;color:var(--text-dim);text-align:center;font-family:var(--font-mono)">(${wsjfBV} + 2×${wsjfTC} + ${wsjfRR}) ÷ ${wsjfROM} = ${wsjfCalc}</div>
+    </div>
+    <div class="sidebar-card" style="margin-bottom:14px">
+      <h3>Definition of Ready — ${dorPassed}/5</h3>
+      ${dorLabels.map(g => `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.78rem">
+          <span class="dor-dot dor-${d[g.key]}">${d[g.key] ? '✓' : '·'}</span>
+          <span style="color:${d[g.key] ? 'var(--text)' : 'var(--text-dim)'}">${g.label}</span>
+        </div>`).join('')}
+      ${dorPassed < 5 ? `<p style="font-size:0.7rem;color:var(--orange);margin-top:10px;line-height:1.5">
+        ${5 - dorPassed} gate${5-dorPassed>1?'s':''} remaining. Cards land in Intake once all gates clear.</p>` :
+        detailFastPath
+          ? `<p style="font-size:0.7rem;color:#06b6d4;margin-top:10px;line-height:1.5">All DoR gates cleared ✓<br><strong>⚡ Fast-path eligible</strong> — committed date within 14 days. Land directly in Ready for Analysis, skip Intake.</p>`
+          : `<p style="font-size:0.7rem;color:var(--green);margin-top:10px;line-height:1.5">All DoR gates cleared ✓<br>Cards land in <strong>Intake/Backlog</strong>, ranked by WSJF score. Pull into Ready for Analysis as capacity opens.</p>`}
+      ${d.spike_needed ? `<div style="margin-top:8px;padding:8px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.2);border-radius:6px;font-size:0.72rem;color:var(--orange)">⚡ Spike required — ROM is provisional until spike resolves the open assumption.</div>` : ''}
+    </div>
+    <div class="sidebar-card">
+      <h3>RAID — ${d.project} (${raidEntries.length} entries)</h3>
+      ${raidEntries.length ? raidEntries.map(e => {
+        const colors = {R:'var(--red)',A:'var(--orange)',I:'#ef4444',D:'var(--purple)'};
+        const c = colors[e.type] || 'var(--blue)';
+        return `<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);align-items:flex-start">
+          <span style="font-family:var(--font-mono);font-size:0.6rem;font-weight:700;color:${c};flex-shrink:0;margin-top:1px">${e.id}</span>
+          <span style="font-size:0.72rem;color:var(--text-muted);line-height:1.4">${e.description}</span>
+        </div>`;
+      }).join('') : '<p style="font-size:0.75rem;color:var(--text-dim)">No RAID entries for this project yet.</p>'}
+    </div>
+  `;
+
+  const panel = document.getElementById('sow-detail-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ── WORKSTREAMS ──────────────────────────────────────────────────────────────

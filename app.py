@@ -61,6 +61,37 @@ def load_discovery_log():
     return entries
 
 
+def load_sow_deliverables():
+    entries = []
+    csv_path = os.path.join(os.path.dirname(__file__), 'data', 'sow_deliverables.csv')
+    with open(csv_path, newline='', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            e = dict(row)
+            for field in ('rom_days',):
+                try: e[field] = int(e[field])
+                except: pass
+            for field in ('dor_ac','dor_deps','dor_owner','dor_sized','dor_raid','spike_needed'):
+                e[field] = e.get(field,'').lower() == 'true'
+            entries.append(e)
+    return entries
+
+
+def load_sow_tasks():
+    entries = []
+    csv_path = os.path.join(os.path.dirname(__file__), 'data', 'sow_tasks.csv')
+    with open(csv_path, newline='', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            e = dict(row)
+            try: e['rom_days'] = int(e['rom_days'])
+            except: pass
+            e['predecessors'] = [p.strip() for p in e.get('predecessors','').split() if p.strip()]
+            e['successors']   = [s.strip() for s in e.get('successors','').split()   if s.strip()]
+            entries.append(e)
+    return entries
+
+
 def build_raid_log():
     """Merge card-derived RAID flags with standalone log entries."""
     card_raids = []
@@ -193,6 +224,8 @@ def index():
         "workstreams": WORKSTREAM_RACI,
         "raid_log":    build_raid_log(),
         "discovery_log": load_discovery_log(),
+        "sow_deliverables": load_sow_deliverables(),
+        "sow_tasks": load_sow_tasks(),
     })
     return render_template("index.html", inline_data=inline_data)
 
@@ -220,6 +253,14 @@ def get_raid_log():
 @app.route("/api/discovery_log")
 def get_discovery_log():
     return jsonify(load_discovery_log())
+
+
+@app.route("/api/sow")
+def get_sow():
+    return jsonify({
+        "deliverables": load_sow_deliverables(),
+        "tasks": load_sow_tasks()
+    })
 
 
 # ── Entry Point ───────────────────────────────────────────────────────────────
