@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta name="version" content="v7.4-fastpath">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TPM Delivery Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1424,15 +1427,291 @@
 
   /* ── SOW TRANSLATION VIEW ───────────────────────────────── */
 
+  /* View toggle button group */
+  .sow-view-toggle {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-left: auto;
+  }
+  .sow-view-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .sow-view-btn:not(:last-child) { border-right: 1px solid var(--border-bright); }
+  .sow-view-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+  .sow-view-btn.active { background: rgba(0,212,255,0.1); color: var(--blue); }
+
+  /* SOW Kanban board */
+  .sow-board {
+    display: flex;
+    gap: 0;
+    overflow-x: visible;
+    align-items: flex-start;
+    padding-bottom: 16px;
+    min-height: 400px;
+  }
+  .sow-col {
+    flex: 1;
+    min-width: 130px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--sow-col-color, var(--blue));
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sow-col:not(:last-child) { border-right: none; }
+  .sow-col:first-child { border-radius: 0 0 0 var(--radius); }
+  .sow-col:last-child  { border-radius: 0 0 var(--radius) 0; }
+  /* sow-col-header removed — pipeline strip is the shared header */
+  .sow-col-wip-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .sow-wip-badge {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+  .sow-wip-badge.over { color: var(--red); border-color: rgba(233,69,96,0.4); background: rgba(233,69,96,0.08); }
+  .sow-col-count {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+  }
+  .sow-col-body {
+    padding: 8px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-height: 60px;
+  }
+
+  /* Deliverable cards on the board */
+  .sow-board-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--sow-card-color, var(--blue));
+    border-radius: var(--radius);
+    padding: 9px 10px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    position: relative;
+  }
+  .sow-board-card:hover { background: rgba(255,255,255,0.05); }
+  .sow-board-card.selected { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+  .sow-board-card-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 5px;
+  }
+  .sow-board-card-meta {
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    margin-bottom: 5px;
+    line-height: 1.3;
+  }
+  .sow-board-card-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-bottom: 5px;
+  }
+  .sow-board-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 5px;
+  }
+  .sow-board-card-wsjf {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    color: var(--blue);
+    background: rgba(0,212,255,0.06);
+    border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 3px;
+    padding: 1px 4px;
+  }
+  .sow-dor-mini {
+    display: flex;
+    gap: 2px;
+  }
+  .sow-dor-mini-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+  .sow-dor-mini-dot.on { background: var(--green); }
+
+  /* Gate advance button */
+  .sow-gate-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    margin-top: 6px;
+    padding: 5px 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed rgba(255,255,255,0.12);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .sow-gate-btn:hover { background: rgba(0,212,255,0.06); border-color: rgba(0,212,255,0.3); color: var(--blue); }
+  .sow-gate-btn.ready { border-color: rgba(16,185,129,0.4); color: var(--green); background: rgba(16,185,129,0.05); }
+  .sow-gate-btn.blocked { opacity: 0.4; cursor: not-allowed; }
+
+  /* Gate check modal overlay */
+  #sow-gate-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+  #sow-gate-modal.open { display: flex; }
+  .sow-gate-modal-box {
+    background: #1a2535;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 24px 28px;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    animation: slideDown 0.2s ease;
+  }
+  .sow-gate-modal-title {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--blue);
+    margin-bottom: 6px;
+  }
+  .sow-gate-modal-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+  .sow-gate-check-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .sow-gate-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    transition: background 0.12s;
+  }
+  .sow-gate-check-item:hover { background: rgba(255,255,255,0.04); }
+  .sow-gate-check-item input[type=checkbox] { margin-top: 1px; flex-shrink: 0; accent-color: var(--green); }
+  .sow-gate-check-item.checked { color: var(--text); border-color: rgba(16,185,129,0.2); background: rgba(16,185,129,0.04); }
+  .sow-gate-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .sow-gate-cancel {
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 7px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .sow-gate-cancel:hover { background: rgba(255,255,255,0.05); }
+  .sow-gate-advance {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.35);
+    color: var(--green);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 7px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .sow-gate-advance:hover { background: rgba(16,185,129,0.18); }
+  .sow-gate-advance:disabled { opacity: 0.35; cursor: not-allowed; }
+  .sow-gate-progress {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .sow-gate-progress span { color: var(--green); font-weight: 700; }
+
+  /* Step 07 kanban link */
+  .sow-kanban-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 5px;
+    width: fit-content;
+  }
+  .sow-kanban-link.exists { background: rgba(16,185,129,0.08); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+  .sow-kanban-link.missing { background: rgba(245,166,35,0.08); color: var(--orange); border: 1px dashed rgba(245,166,35,0.35); cursor: pointer; }
+  .sow-kanban-link.missing:hover { background: rgba(245,166,35,0.14); }
+
   /* Process pipeline */
   .sow-pipeline {
     display: flex;
     gap: 0;
-    margin-bottom: 24px;
+    margin-bottom: 0;
     overflow: visible;
-    padding-bottom: 4px;
+    padding-bottom: 0;
     position: relative;
   }
+  /* In list mode, restore the gap below the pipeline strip */
+  .sow-pipeline.list-mode { margin-bottom: 24px; padding-bottom: 4px; }
   .sow-step {
     flex: 1;
     min-width: 130px;
@@ -1574,6 +1853,49 @@
   .sow-chip-spike    { background: rgba(245,166,35,0.1);  color: var(--orange); border: 1px solid rgba(245,166,35,0.2); }
   .sow-chip-ready    { background: rgba(16,185,129,0.1);  color: var(--green);  border: 1px solid rgba(16,185,129,0.25); }
   .sow-chip-progress { background: rgba(0,212,255,0.08);  color: var(--blue);   border: 1px solid rgba(0,212,255,0.2); }
+
+  /* Pipeline step badge in status column */
+  .pipe-step-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border-left: 3px solid var(--step-col, var(--blue));
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    white-space: nowrap;
+    width: fit-content;
+  }
+  .pipe-step-num {
+    color: var(--step-col, var(--blue));
+    font-size: 0.55rem;
+    opacity: 0.8;
+  }
+  /* Modifier chips — sit below the step badge */
+  .pipe-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 5px;
+  }
+  .pipe-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .pipe-chip-blocked  { background: rgba(233,69,96,0.12);  color: #f87171; border: 1px solid rgba(233,69,96,0.3); }
+  .pipe-chip-spike    { background: rgba(245,166,35,0.1);  color: var(--orange); border: 1px solid rgba(245,166,35,0.25); }
+  .pipe-chip-fastpath { background: rgba(6,182,212,0.1);   color: #06b6d4; border: 1px solid rgba(6,182,212,0.3); font-weight:600; }
 
   /* Deliverables table */
   .sow-table-wrap {
@@ -2206,10 +2528,40 @@
       <p>Translating a Statement of Work into a trustworthy delivery plan. Each deliverable is decomposed, sized, serialized, and gated through Definition of Ready before cards enter the Kanban board.</p>
     </div>
 
-    <!-- Process pipeline -->
+    <!-- Process pipeline — shared header for both list and board views -->
     <div class="sow-pipeline" id="sow-pipeline"></div>
     <!-- Fixed overlay popover for pipeline steps (avoids overflow clipping) -->
     <div id="sow-step-overlay"></div>
+
+    <!-- View toggle -->
+    <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:12px">
+      <div class="sow-view-toggle">
+        <button class="sow-view-btn active" id="sow-btn-list" onclick="setSowView('list')">≡ List</button>
+        <button class="sow-view-btn" id="sow-btn-board" onclick="setSowView('board')">⊞ Board</button>
+      </div>
+    </div>
+
+    <!-- Gate check modal (shared) -->
+    <div id="sow-gate-modal">
+      <div class="sow-gate-modal-box">
+        <div class="sow-gate-modal-title" id="gate-modal-label"></div>
+        <div class="sow-gate-modal-heading" id="gate-modal-heading"></div>
+        <div class="sow-gate-progress" id="gate-modal-progress"></div>
+        <div class="sow-gate-check-list" id="gate-modal-checks"></div>
+        <div class="sow-gate-modal-actions">
+          <button class="sow-gate-cancel" onclick="closeGateModal()">Cancel</button>
+          <button class="sow-gate-advance" id="gate-modal-advance" onclick="confirmGateAdvance()">Advance to next step →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOW Kanban board (hidden by default) -->
+    <div id="sow-board-view" style="display:none">
+      <div class="sow-board" id="sow-board"></div>
+    </div>
+
+    <!-- List view: filters + table -->
+    <div id="sow-list-view">
 
     <!-- Filters + summary -->
     <div class="sow-toolbar">
@@ -2254,7 +2606,7 @@
             <th>WSJF ▼</th>
             <th>ROM</th>
             <th>Confidence</th>
-            <th>Status</th>
+            <th>Pipeline Step</th>
             <th>DoR</th>
             <th>Committed</th>
             <th>Target Date</th>
@@ -2264,6 +2616,8 @@
         <tbody id="sow-table-body"></tbody>
       </table>
     </div>
+
+    </div><!-- /sow-list-view -->
 
     <!-- Task breakdown panel -->
     <div class="sow-detail-panel" id="sow-detail-panel" style="display:none">
@@ -2662,6 +3016,7 @@ function renderKanban() {
     const colEl = document.createElement('div');
     colEl.className = 'kanban-col';
     colEl.id = 'col-' + col.id;
+    colEl.dataset.column = col.id;
     colEl.style.setProperty('--col-accent', col.accent);
 
     // Build header
@@ -3304,6 +3659,9 @@ let activeSowStep = null;
 
 function renderSow() {
   renderSowPipeline();
+  // Default to list mode — add class so pipeline has bottom margin
+  var pip = document.getElementById('sow-pipeline');
+  if (pip) pip.classList.add('list-mode');
 
   // Populate project filter
   const projects = [...new Set(sowDeliverables.map(d => d.project))].sort();
@@ -3428,10 +3786,10 @@ document.addEventListener('click', function() {
 function renderSowSummary() {
   const chips = document.getElementById('sow-summary-chips');
   if (!chips) return;
-  const blocked  = sowDeliverables.filter(d => d.status === 'Blocked').length;
-  const spike    = sowDeliverables.filter(d => d.spike_needed || d.status === 'Spike In Progress').length;
-  const ready    = sowDeliverables.filter(d => d.status === 'Ready for Execution').length;
-  const inprog   = sowDeliverables.filter(d => ['In Decomposition','In Progress'].includes(d.status)).length;
+  const blocked  = sowDeliverables.filter(d => d.is_blocked).length;
+  const spike    = sowDeliverables.filter(d => d.is_spike || d.spike_needed).length;
+  const ready    = sowDeliverables.filter(d => d.pipeline_step === '07').length;
+  const inprog   = sowDeliverables.filter(d => d.pipeline_step && d.pipeline_step !== '07').length;
   chips.innerHTML = `
     ${blocked  ? `<span class="sow-chip sow-chip-blocked">⚠ ${blocked} Blocked</span>` : ''}
     ${spike    ? `<span class="sow-chip sow-chip-spike">⚡ ${spike} Spike</span>` : ''}
@@ -3440,22 +3798,33 @@ function renderSowSummary() {
   `;
 }
 
-function sowStatusColor(status) {
+function sowStepColor(step) {
   const map = {
-    'Blocked':             'var(--red)',
-    'Spike In Progress':   'var(--orange)',
-    'In Decomposition':    'var(--blue)',
-    'In Progress':         'var(--blue)',
-    'Ready for Execution': 'var(--green)',
+    '01': '#e94560', '02': '#f5a623', '03': '#00d4ff',
+    '04': '#7c3aed', '05': '#10b981', '06': '#f59e0b', '07': '#06b6d4'
   };
-  return map[status] || 'var(--text-dim)';
+  return map[step] || 'var(--text-dim)';
+}
+
+function sowStepLabel(step) {
+  const map = {
+    '01':'SOW Intake', '02':'Decomposition', '03':'Owner Sizing',
+    '04':'Sizing Review', '05':'Serialization', '06':'DoR Gate', '07':'→ Kanban'
+  };
+  return map[step] || step;
+}
+
+// Keep for backwards compat in any RAID-adjacent code
+function sowStatusColor(status) {
+  return status === 'Ready for Execution' ? 'var(--green)'
+       : status === 'Blocked'             ? 'var(--red)'
+       : 'var(--blue)';
 }
 
 function sowDateRisk(d) {
-  // Check if blocked/low-confidence deliverable is within 7 days of committed date
-  if (!d.committed_date || d.status === 'Ready for Execution') return false;
+  if (!d.committed_date || d.pipeline_step === '07') return false;
   const diff = (new Date(d.committed_date) - new Date()) / 86400000;
-  return diff < 14 && (d.status === 'Blocked' || d.confidence === 'Low');
+  return diff < 14 && (d.is_blocked || d.confidence === 'Low');
 }
 
 function dorGates(d) {
@@ -3509,7 +3878,7 @@ function renderSowRegister() {
     const scoreColor = wsjf >= 6 ? 'var(--green)' : wsjf >= 3 ? 'var(--blue)' : 'var(--text-dim)';
     const dorComplete = d.dor_ac && d.dor_deps && d.dor_owner && d.dor_sized && d.dor_raid;
     const daysToTarget = d.target_date ? Math.ceil((new Date(d.target_date) - new Date()) / 86400000) : 999;
-    const fastPath = dorComplete && daysToTarget <= 14 && d.status !== 'Ready for Execution';
+    const fastPath = dorComplete && daysToTarget <= 14 && d.pipeline_step !== '07';
 
     return `<tr class="sow-row${isSelected ? ' selected' : ''}" onclick="toggleSowDetail('${d.id}')">
       <td><span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-dim)">${d.id}</span></td>
@@ -3534,8 +3903,20 @@ function renderSowRegister() {
       </td>
       <td><span class="conf-badge conf-${d.confidence}">${d.confidence}</span></td>
       <td>
-        <span class="status-badge" style="background:${sc}18;color:${sc};border:1px solid ${sc}33">${d.status}</span>
-        ${fastPath ? '<div style="margin-top:4px;display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:0.55rem;color:#06b6d4;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.25);border-radius:3px;padding:2px 5px;white-space:nowrap">⚡ Fast-path → Ready for Analysis</div>' : ''}
+        ${(() => {
+          const step  = d.pipeline_step || '02';
+          const col   = sowStepColor(step);
+          const label = sowStepLabel(step);
+          const chips = [];
+          if (d.is_blocked) chips.push('<span class="pipe-chip pipe-chip-blocked">🔒 Blocked</span>');
+          if (d.is_spike)   chips.push('<span class="pipe-chip pipe-chip-spike">⚡ Spike</span>');
+          if (fastPath)     chips.push('<span class="pipe-chip pipe-chip-fastpath">⚡ Fast-path</span>');
+          return '<div class="pipe-step-badge" style="--step-col:' + col + '">'
+               + '<span class="pipe-step-num">STEP ' + step + '</span>'
+               + '<span>' + label + '</span>'
+               + '</div>'
+               + (chips.length ? '<div class="pipe-chips">' + chips.join('') + '</div>' : '');
+        })()}
       </td>
       <td><div class="dor-gates">${dorGates(d)}</div></td>
       <td class="${atRisk ? 'date-atrisk' : 'date-ok'}" title="${atRisk ? '⚠ At risk vs committed date' : ''}">${d.committed_date}${atRisk ? ' ⚠' : ''}</td>
@@ -3555,7 +3936,309 @@ function toggleSowDetail(id) {
 function closeSowDetail() {
   activeSowDeliverable = null;
   document.getElementById('sow-detail-panel').style.display = 'none';
+  if (sowViewMode === 'board') renderSowBoard();
+  else renderSowRegister();
+}
+
+// ── SOW BOARD VIEW ────────────────────────────────────────────────────────────
+
+var sowViewMode = 'list';   // 'list' | 'board'
+var gateState = null;       // { deliverableId, fromStep, toStep, checks, checked[] }
+
+// Gate artifact requirements per step transition
+var GATE_CHECKS = {
+  '01→02': {
+    label: 'Step 01 → 02',
+    heading: 'SOW Intake → Decomposition',
+    checks: [
+      'All deliverables from the SOW have been enumerated and logged',
+      'Each deliverable has a section reference and accountable owner',
+      'Initial RAID entries created for known risks and assumptions',
+      'Customer kickoff meeting scheduled or completed',
+    ]
+  },
+  '02→03': {
+    label: 'Step 02 → 03',
+    heading: 'Decomposition → Owner Sizing',
+    checks: [
+      'All tasks for this deliverable have been identified and listed',
+      'No tasks remain at the epic/deliverable level — all are atomic',
+      'Spike cards created for any tasks with unvalidated assumptions',
+      'Each task has a named owner assigned (not just a workstream)',
+    ]
+  },
+  '03→04': {
+    label: 'Step 03 → 04',
+    heading: 'Owner Sizing → Sizing Review',
+    checks: [
+      'Every task has a ROM estimate provided by its own owner',
+      'Confidence tier assigned (High / Medium / Low) per task',
+      'Low-confidence tasks have a corresponding RAID Assumption entry',
+      'No estimates were cross-anchored — owners sized independently',
+    ]
+  },
+  '04→05': {
+    label: 'Step 04 → 05',
+    heading: 'Sizing Review → Serialization',
+    checks: [
+      'Group review completed — disagreements resolved or escalated',
+      'Critical path checked against SOW committed date',
+      'Date gaps identified and logged as Risk entries in RAID',
+      'Final agreed ROM recorded for all tasks',
+    ]
+  },
+  '05→06': {
+    label: 'Step 05 → 06',
+    heading: 'Serialization → DoR Gate',
+    checks: [
+      'Predecessor and successor relationships mapped for every task',
+      'Critical path explicitly identified and documented',
+      'Cross-workstream dependencies logged as RAID D entries with owners',
+      'No circular dependencies exist in the task graph',
+    ]
+  },
+  '06→07': {
+    label: 'Step 06 → 07',
+    heading: 'DoR Gate → Kanban Board',
+    checks: [
+      'Acceptance Criteria written for every task (gate 1/5)',
+      'All dependencies mapped and sequenced (gate 2/5)',
+      'Named owner confirmed with available capacity (gate 3/5)',
+      'ROM sized by the owner who will do the work (gate 4/5)',
+      'RAID fully populated from decomposition sessions (gate 5/5)',
+    ]
+  }
+};
+
+// WIP limits per step
+var SOW_WIP = { '01': Infinity, '02': 4, '03': 4, '04': 3, '05': 3, '06': Infinity, '07': Infinity };
+
+function setSowView(mode) {
+  sowViewMode = mode;
+  document.getElementById('sow-btn-list').classList.toggle('active', mode === 'list');
+  document.getElementById('sow-btn-board').classList.toggle('active', mode === 'board');
+  document.getElementById('sow-list-view').style.display  = mode === 'list'  ? '' : 'none';
+  document.getElementById('sow-board-view').style.display = mode === 'board' ? '' : 'none';
+  // Pipeline strip: flush to board columns in board mode, spaced in list mode
+  var pip = document.getElementById('sow-pipeline');
+  if (pip) pip.classList.toggle('list-mode', mode === 'list');
+  closeSowDetail();
+  if (mode === 'board') renderSowBoard();
+}
+
+function renderSowBoard() {
+  const board = document.getElementById('sow-board');
+  if (!board) return;
+
+  const steps = ['01','02','03','04','05','06','07'];
+  const stepTitles = {
+    '01':'SOW Intake', '02':'Decomposition', '03':'Owner Sizing',
+    '04':'Sizing Review', '05':'Serialization', '06':'DoR Gate', '07':'→ Kanban'
+  };
+  const stepColors = {
+    '01':'#e94560','02':'#f5a623','03':'#00d4ff',
+    '04':'#7c3aed','05':'#10b981','06':'#f59e0b','07':'#06b6d4'
+  };
+  const wsColors = {'Data':'#00d4ff','Platform/Dev':'#7c3aed','Launch':'#10b981','Stakeholders':'#e94560','Customer Success':'#f59e0b'};
+
+  // Find matching Kanban cards for step 07 deliverables
+  function findKanbanCard(d) {
+    if (!kanbanData.cards) return null;
+    return kanbanData.cards.find(function(c) {
+      return c.title && (
+        c.title.toLowerCase().includes(d.project.toLowerCase()) ||
+        c.title.toLowerCase().includes(d.deliverable.toLowerCase().split(' ').slice(0,3).join(' '))
+      );
+    }) || null;
+  }
+
+  board.innerHTML = steps.map(function(step) {
+    const color    = stepColors[step];
+    const title    = stepTitles[step];
+    const wip      = SOW_WIP[step];
+    const cards    = sowDeliverables.filter(function(d) { return d.pipeline_step === step; });
+    const wipOver  = isFinite(wip) && cards.length > wip;
+    const wipLabel = isFinite(wip) ? 'WIP ' + wip : '∞';
+
+    var cardsHtml = '';
+    cards.forEach(function(d) {
+      var wsjf      = Math.round((( (Number(d.business_value)||0) + 2*(Number(d.time_criticality)||0) + (Number(d.risk_reduction)||0) ) / Math.max(1, Number(d.rom_days))) * 100) / 100;
+      var wsjfColor = wsjf >= 6 ? '#10b981' : wsjf >= 3 ? '#00d4ff' : '#64748b';
+      var cardColor = wsColors[d.workstream] || '#00d4ff';
+      var isSelected = activeSowDeliverable === d.id;
+
+      // DoR mini dots
+      var dorKeys = ['dor_ac','dor_deps','dor_owner','dor_sized','dor_raid'];
+      var dorDots = dorKeys.map(function(k) {
+        return '<div class="sow-dor-mini-dot' + (d[k] ? ' on' : '') + '" title="' + k.replace('dor_','') + '"></div>';
+      }).join('');
+
+      // Chips
+      var chips = '';
+      if (d.is_blocked) chips += '<span class="pipe-chip pipe-chip-blocked">🔒 Blocked</span>';
+      if (d.is_spike)   chips += '<span class="pipe-chip pipe-chip-spike">⚡ Spike</span>';
+      var dorComplete  = dorKeys.every(function(k) { return d[k]; });
+      var daysToTarget = d.target_date ? Math.ceil((new Date(d.target_date) - new Date()) / 86400000) : 999;
+      if (dorComplete && daysToTarget <= 14 && step !== '07')
+        chips += '<span class="pipe-chip pipe-chip-fastpath">⚡ Fast-path</span>';
+
+      // Gate advance button (not on step 07, not if blocked)
+      var gateBtn = '';
+      if (step !== '07') {
+        var nextStep   = String(parseInt(step) + 1).padStart(2,'0');
+        var gateKey    = step + '→' + nextStep;
+        var gateDef    = GATE_CHECKS[gateKey];
+        var canAdvance = !d.is_blocked;
+        var btnClass   = canAdvance ? 'sow-gate-btn ready' : 'sow-gate-btn blocked';
+        var btnLabel   = canAdvance
+          ? '✓ Gate check → Step ' + nextStep
+          : '🔒 Resolve blocker first';
+        gateBtn = '<button class="' + btnClass + '" onclick="'
+          + (canAdvance ? 'openGateModal(\'' + d.id + '\',\'' + step + '\',\'' + nextStep + '\')' : '')
+          + '" ' + (canAdvance ? '' : 'disabled') + '>'
+          + btnLabel + '</button>';
+      }
+
+      // Step 07: Kanban link
+      var kanbanLink = '';
+      if (step === '07') {
+        var kCard = findKanbanCard(d);
+        if (kCard) {
+          kanbanLink = '<div class="sow-kanban-link exists">✓ On Board — ' + kCard.column.replace('_',' ') + '</div>';
+        } else {
+          kanbanLink = '<div class="sow-kanban-link missing" onclick="highlightKanbanCreate(\'' + d.id + '\')" title="No matching card found — click to go to Kanban Intake">'
+            + '+ Ready to create card</div>';
+        }
+      }
+
+      cardsHtml += '<div class="sow-board-card' + (isSelected ? ' selected' : '') + '"'
+        + ' style="--sow-card-color:' + cardColor + '"'
+        + ' onclick="boardCardClick(\'' + d.id + '\')">'
+        + '<div class="sow-board-card-title">' + d.deliverable + '</div>'
+        + '<div class="sow-board-card-meta">' + d.project + ' &nbsp;·&nbsp; ' + d.rom_days + 'd'
+        + (d.committed_date ? ' &nbsp;·&nbsp; ' + d.committed_date : '') + '</div>'
+        + (chips ? '<div class="sow-board-card-chips">' + chips + '</div>' : '')
+        + kanbanLink
+        + '<div class="sow-board-card-footer">'
+        +   '<span class="sow-board-card-wsjf" style="color:' + wsjfColor + '">WSJF ' + wsjf + '</span>'
+        +   '<div class="sow-dor-mini">' + dorDots + '</div>'
+        + '</div>'
+        + gateBtn
+        + '</div>';
+    });
+
+    if (!cards.length) {
+      cardsHtml = '<div style="text-align:center;color:rgba(255,255,255,0.15);font-size:0.68rem;font-family:var(--font-mono);padding:20px 0">empty</div>';
+    }
+
+    return '<div class="sow-col" style="--sow-col-color:' + color + '">'
+      + '<div class="sow-col-wip-bar">'
+      +   '<span class="sow-wip-badge' + (wipOver ? ' over' : '') + '">' + wipLabel + '</span>'
+      +   '<span class="sow-col-count">' + cards.length + (isFinite(wip) ? '/' + wip : '') + '</span>'
+      + '</div>'
+      + '<div class="sow-col-body">' + cardsHtml + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function boardCardClick(id) {
+  if (activeSowDeliverable === id) { closeSowDetail(); renderSowBoard(); return; }
+  activeSowDeliverable = id;
+  openSowDetail(id);
+  renderSowBoard();
+  // Scroll detail panel into view
+  setTimeout(function() {
+    var panel = document.getElementById('sow-detail-panel');
+    if (panel) panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }, 50);
+}
+
+function openGateModal(delivId, fromStep, toStep) {
+  var d      = sowDeliverables.find(function(x) { return x.id === delivId; });
+  var gateKey = fromStep + '→' + toStep;
+  var gateDef = GATE_CHECKS[gateKey];
+  if (!d || !gateDef) return;
+
+  gateState = { deliverableId: delivId, fromStep: fromStep, toStep: toStep,
+                checks: gateDef.checks, checked: gateDef.checks.map(function() { return false; }) };
+
+  document.getElementById('gate-modal-label').textContent   = gateDef.label + ' — ' + d.deliverable;
+  document.getElementById('gate-modal-heading').textContent = gateDef.heading;
+  updateGateModal();
+  document.getElementById('sow-gate-modal').classList.add('open');
+}
+
+function updateGateModal() {
+  if (!gateState) return;
+  var checkedCount = gateState.checked.filter(Boolean).length;
+  var total        = gateState.checks.length;
+  var allDone      = checkedCount === total;
+
+  document.getElementById('gate-modal-progress').innerHTML =
+    '<span>' + checkedCount + '</span> of ' + total + ' artifacts confirmed';
+
+  var checksHtml = '';
+  gateState.checks.forEach(function(text, i) {
+    var isChecked = gateState.checked[i];
+    checksHtml += '<label class="sow-gate-check-item' + (isChecked ? ' checked' : '') + '">'
+      + '<input type="checkbox"' + (isChecked ? ' checked' : '') + ' onchange="toggleGateCheck(' + i + ')">'
+      + text
+      + '</label>';
+  });
+  document.getElementById('gate-modal-checks').innerHTML = checksHtml;
+
+  var advBtn = document.getElementById('gate-modal-advance');
+  advBtn.disabled = !allDone;
+  advBtn.textContent = allDone
+    ? '✓ Advance to Step ' + gateState.toStep + ' →'
+    : checkedCount + '/' + total + ' — confirm all to advance';
+}
+
+function toggleGateCheck(i) {
+  if (!gateState) return;
+  gateState.checked[i] = !gateState.checked[i];
+  updateGateModal();
+}
+
+function confirmGateAdvance() {
+  if (!gateState) return;
+  var allDone = gateState.checked.every(Boolean);
+  if (!allDone) return;
+
+  // Advance the deliverable's pipeline_step in the local data
+  var d = sowDeliverables.find(function(x) { return x.id === gateState.deliverableId; });
+  if (d) d.pipeline_step = gateState.toStep;
+
+  closeGateModal();
+  renderSowBoard();
   renderSowRegister();
+  renderSowSummary();
+}
+
+function closeGateModal() {
+  gateState = null;
+  document.getElementById('sow-gate-modal').classList.remove('open');
+}
+
+// Close gate modal on backdrop click
+document.getElementById('sow-gate-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeGateModal();
+});
+
+function highlightKanbanCreate(delivId) {
+  var d = sowDeliverables.find(function(x) { return x.id === delivId; });
+  if (!d) return;
+  // Switch to Kanban view and highlight the Intake column
+  switchView('kanban', document.querySelector('[onclick*="kanban"]'));
+  setTimeout(function() {
+    var intakeCol = document.querySelector('[data-column="intake"]');
+    if (intakeCol) {
+      intakeCol.style.transition = 'box-shadow 0.3s';
+      intakeCol.style.boxShadow  = '0 0 0 2px #06b6d4, 0 0 20px rgba(6,182,212,0.3)';
+      intakeCol.scrollIntoView({ behavior:'smooth', block:'center' });
+      setTimeout(function() { intakeCol.style.boxShadow = ''; }, 2500);
+    }
+  }, 300);
 }
 
 function openSowDetail(id) {
@@ -3566,9 +4249,12 @@ function openSowDetail(id) {
   document.getElementById('sow-detail-title').textContent = d.deliverable;
   const detailDorComplete = d.dor_ac && d.dor_deps && d.dor_owner && d.dor_sized && d.dor_raid;
   const detailDaysToTarget = d.target_date ? Math.ceil((new Date(d.target_date) - new Date()) / 86400000) : 999;
-  const detailFastPath = detailDorComplete && detailDaysToTarget <= 14 && d.status !== 'Ready for Execution';
+  const detailFastPath = detailDorComplete && detailDaysToTarget <= 14 && d.pipeline_step !== '07';
+  const metaStep = d.pipeline_step || '02';
+  const metaStepLabel = sowStepLabel(metaStep);
+  const metaStepColor = sowStepColor(metaStep);
   document.getElementById('sow-detail-meta').innerHTML =
-    `${d.project} &nbsp;·&nbsp; §${d.section} &nbsp;·&nbsp; Owner: ${d.owner} &nbsp;·&nbsp; ${d.workstream} workstream &nbsp;·&nbsp; ROM: ${d.rom_days}d (${d.confidence} confidence) &nbsp;·&nbsp; Committed: ${d.committed_date}`
+    `${d.project} &nbsp;·&nbsp; §${d.section} &nbsp;·&nbsp; Owner: ${d.owner} &nbsp;·&nbsp; ${d.workstream} workstream &nbsp;·&nbsp; ROM: ${d.rom_days}d (${d.confidence} confidence) &nbsp;·&nbsp; Committed: ${d.committed_date} &nbsp;·&nbsp; <span style="font-family:var(--font-mono);font-size:0.65rem;color:${metaStepColor}">STEP ${metaStep} ${metaStepLabel}</span>`
     + (detailFastPath ? ' &nbsp;<span style="font-family:var(--font-mono);font-size:0.6rem;color:#06b6d4;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);border-radius:4px;padding:2px 7px">⚡ Fast-path → Ready for Analysis</span>' : '');
 
   // Task list
@@ -3667,7 +4353,7 @@ function openSowDetail(id) {
           <span style="color:${d[g.key] ? 'var(--text)' : 'var(--text-dim)'}">${g.label}</span>
         </div>`).join('')}
       ${dorPassed < 5 ? `<p style="font-size:0.7rem;color:var(--orange);margin-top:10px;line-height:1.5">
-        ${5 - dorPassed} gate${5-dorPassed>1?'s':''} remaining. Cards land in Intake once all gates clear.</p>` :
+        ${5 - dorPassed} gate${5-dorPassed>1?'s':''} remaining — deliverable is in Step ${d.pipeline_step||'06'} (${sowStepLabel(d.pipeline_step||'06')}).</p>` :
         detailFastPath
           ? `<p style="font-size:0.7rem;color:#06b6d4;margin-top:10px;line-height:1.5">All DoR gates cleared ✓<br><strong>⚡ Fast-path eligible</strong> — committed date within 14 days. Land directly in Ready for Analysis, skip Intake.</p>`
           : `<p style="font-size:0.7rem;color:var(--green);margin-top:10px;line-height:1.5">All DoR gates cleared ✓<br>Cards land in <strong>Intake/Backlog</strong>, ranked by WSJF score. Pull into Ready for Analysis as capacity opens.</p>`}
