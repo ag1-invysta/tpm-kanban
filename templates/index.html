@@ -2955,6 +2955,8 @@ function loadAll() {
     discoveryData = INLINE_DATA.discovery;
   discoveryLog = INLINE_DATA.discovery_log || [];
   sowDeliverables = INLINE_DATA.sow_deliverables || [];
+  // Correct any stale pipeline_step '07' values — pipeline is now 6 steps max
+  sowDeliverables.forEach(function(d) { if (d.pipeline_step === '07') d.pipeline_step = '06'; });
   sowTasks = INLINE_DATA.sow_tasks || [];
     workstreamData = INLINE_DATA.workstreams;
     raidLogData  = INLINE_DATA.raid_log;
@@ -3645,13 +3647,13 @@ const SOW_PIPELINE_STEPS = [
   {
     num: '05', title: 'DoR Gate', color: '#f59e0b',
     sub: 'Definition of Ready',
-    detail: ['AC written for every task', 'All dependencies identified and sequenced', 'Owner confirmed and available', 'ROM reviewed by owner (not top-down assigned)', 'RAID populated from decomposition sessions'],
+	  detail: ['AC written for every task', 'All dependencies identified and sequenced', 'Owner confirmed and available', 'ROM->Committed dates derived by owner (not top-down assigned)', 'RAID populated from decomposition sessions'],
     output: 'DoR scorecard — all 5 gates must be green',
     dorGates: [
       { gate: 'AC Written',          items: ['Outcome clearly stated (not just a task title)', 'Acceptance criteria include both happy path and edge cases', 'Success metric is measurable and agreed with the customer'] },
       { gate: 'Dependencies Mapped', items: ['All predecessor tasks identified and sequenced', 'Cross-workstream handoffs explicit in task description', 'External dependencies (client IT, vendor) logged in RAID'] },
       { gate: 'Owner Confirmed',     items: ['Named individual confirmed — not just a team or workstream', 'Owner has capacity in the delivery window', 'Owner has reviewed the task description and AC'] },
-      { gate: 'Sized by Owner',      items: ['ROM estimate provided by the owner who will do the work', 'Confidence tier assigned: High / Medium / Low', 'Low confidence → Assumption entry created in RAID'] },
+	    { gate: 'Sized by Owner',      items: ['ROM->Definitive estimate provided by the owner who will do the work', 'Confidence tier assigned: High / Medium / Low', 'Low confidence → Assumption entry created in RAID'] },
       { gate: 'RAID Populated',      items: ['All risks surfaced in decomposition logged', 'Assumptions requiring validation have entries', 'Cross-workstream dependencies tracked as D entries'] },
     ]
   },
@@ -3829,8 +3831,8 @@ function renderSowSummary() {
   if (!chips) return;
   const blocked  = sowDeliverables.filter(d => d.is_blocked).length;
   const spike    = sowDeliverables.filter(d => d.is_spike || d.spike_needed).length;
-  const ready    = sowDeliverables.filter(d => d.pipeline_step === '07').length;
-  const inprog   = sowDeliverables.filter(d => d.pipeline_step && d.pipeline_step !== '07').length;
+  const ready    = sowDeliverables.filter(d => d.pipeline_step === '06').length;
+  const inprog   = sowDeliverables.filter(d => d.pipeline_step && d.pipeline_step !== '06').length;
   chips.innerHTML = `
     ${blocked  ? `<span class="sow-chip sow-chip-blocked">⚠ ${blocked} Blocked</span>` : ''}
     ${spike    ? `<span class="sow-chip sow-chip-spike">⚡ ${spike} Spike</span>` : ''}
@@ -3863,7 +3865,7 @@ function sowStatusColor(status) {
 }
 
 function sowDateRisk(d) {
-  if (!d.committed_date || d.pipeline_step === '07') return false;
+  if (!d.committed_date || d.pipeline_step === '06') return false;
   const diff = (new Date(d.committed_date) - new Date()) / 86400000;
   return diff < 14 && (d.is_blocked || d.confidence === 'Low');
 }
@@ -3919,7 +3921,7 @@ function renderSowRegister() {
     const scoreColor = wsjf >= 6 ? 'var(--green)' : wsjf >= 3 ? 'var(--blue)' : 'var(--text-dim)';
     const dorComplete = d.dor_ac && d.dor_deps && d.dor_owner && d.dor_sized && d.dor_raid;
     const daysToTarget = d.target_date ? Math.ceil((new Date(d.target_date) - new Date()) / 86400000) : 999;
-    const fastPath = dorComplete && daysToTarget <= 14 && d.pipeline_step !== '07';
+    const fastPath = dorComplete && daysToTarget <= 14 && d.pipeline_step !== '06';
 
     return `<tr class="sow-row${isSelected ? ' selected' : ''}" onclick="toggleSowDetail('${d.id}')">
       <td><span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-dim)">${d.id}</span></td>
@@ -4073,7 +4075,7 @@ function renderSowBoard() {
   };
   const wsColors = {'Data':'#00d4ff','Platform/Dev':'#7c3aed','Launch':'#10b981','Stakeholders':'#e94560','Customer Success':'#f59e0b'};
 
-  // Find matching Kanban cards for step 07 deliverables
+  // Find matching Kanban cards for step 06 deliverables (→ Kanban)
   function findKanbanCard(d) {
     if (!kanbanData.cards) return null;
     return kanbanData.cards.find(function(c) {
@@ -4111,10 +4113,10 @@ function renderSowBoard() {
       if (d.is_spike)   chips += '<span class="pipe-chip pipe-chip-spike">⚡ Spike</span>';
       var dorComplete  = dorKeys.every(function(k) { return d[k]; });
       var daysToTarget = d.target_date ? Math.ceil((new Date(d.target_date) - new Date()) / 86400000) : 999;
-      if (dorComplete && daysToTarget <= 14 && step !== '07')
+      if (dorComplete && daysToTarget <= 14 && step !== '06')
         chips += '<span class="pipe-chip pipe-chip-fastpath">⚡ Fast-path</span>';
 
-      // Gate advance button (not on step 07, not if blocked)
+      // Gate advance button (not on step 06, not if blocked)
       var gateBtn = '';
       if (step !== '06') {
         var nextStep   = String(parseInt(step) + 1).padStart(2,'0');
@@ -4131,9 +4133,9 @@ function renderSowBoard() {
           + btnLabel + '</button>';
       }
 
-      // Step 07: Kanban link
+      // Step 06: Kanban link
       var kanbanLink = '';
-      if (step === '07') {
+      if (step === '06') {
         var kCard = findKanbanCard(d);
         if (kCard) {
           kanbanLink = '<div class="sow-kanban-link exists">✓ On Board — ' + kCard.column.replace('_',' ') + '</div>';
@@ -4281,7 +4283,7 @@ function openSowDetail(id) {
   document.getElementById('sow-detail-title').textContent = d.deliverable;
   const detailDorComplete = d.dor_ac && d.dor_deps && d.dor_owner && d.dor_sized && d.dor_raid;
   const detailDaysToTarget = d.target_date ? Math.ceil((new Date(d.target_date) - new Date()) / 86400000) : 999;
-  const detailFastPath = detailDorComplete && detailDaysToTarget <= 14 && d.pipeline_step !== '07';
+  const detailFastPath = detailDorComplete && detailDaysToTarget <= 14 && d.pipeline_step !== '06';
   const metaStep = d.pipeline_step || '02';
   const metaStepLabel = sowStepLabel(metaStep);
   const metaStepColor = sowStepColor(metaStep);
@@ -4416,10 +4418,10 @@ const RACI_MATRIX = [
   { activity: "SOW Translation to Kanban",  tpm: "A",  eng: "C",  data: "C",  launch: "I",  cs: "I"  },
   { activity: "Data Schema Discovery",      tpm: "A",  eng: "C",  data: "R",  launch: "I",  cs: "I"  },
   { activity: "API Integration Design",     tpm: "C",  eng: "A",  data: "C",  launch: "I",  cs: "I"  },
-  { activity: "Acceptance Criteria Sign-off", tpm: "A", eng: "R", data: "C",  launch: "C",  cs: "C"  },
-  { activity: "UAT Coordination",           tpm: "A",  eng: "C",  data: "I",  launch: "R",  cs: "C"  },
+  { activity: "Acceptance Criteria Sign-off", tpm: "A", eng: "R", data: "C",  launch: "C",  cs: "R"  },
+  { activity: "UAT Coordination",           tpm: "A",  eng: "C",  data: "I",  launch: "R",  cs: "R"  },
   { activity: "Data–Eng Handoff",           tpm: "A",  eng: "R",  data: "C",  launch: "I",  cs: "I"  },
-  { activity: "Go-Live Readiness Gate",     tpm: "C",  eng: "R",  data: "C",  launch: "A",  cs: "C"  },
+  { activity: "Go-Live Readiness Gate",     tpm: "C",  eng: "R",  data: "C",  launch: "A",  cs: "R"  },
   { activity: "CS Handoff & Onboarding",    tpm: "C",  eng: "I",  data: "I",  launch: "R",  cs: "A"  },
 ];
 
